@@ -101,10 +101,10 @@ public class JeepayKit {
             byte[] digestData = md.digest(data);
             return toHex(digestData);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("MD5 digest is unavailable", e);
             return null;
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("Unsupported digest charset: {}", charset, e);
             return null;
         }
     }
