@@ -11,7 +11,7 @@ COPY . /workspace
 
 RUN npm config set registry ${NPM_REGISTRY} \
     && cd /workspace/jeepay-ui-${PLATFORM} \
-    && npm ci \
+    && npm install \
     && npm run build
 
 
