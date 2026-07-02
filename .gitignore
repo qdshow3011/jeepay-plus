@@ -51,6 +51,9 @@ unpackage/
 # [vscode IDE]
 .vscode/
 
+# [Codex isolated worktrees]
+.worktrees/
+
 # [mac]
 .DS_Store
 
