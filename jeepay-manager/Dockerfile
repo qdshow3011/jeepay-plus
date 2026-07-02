@@ -1,9 +1,7 @@
 #
 #   jeepay-manager（运营管理平台）Java 程序镜像构建脚本
-#   支持多阶段构建：Maven 构建 + JRE 运行
 #
 
-# ------ 构建阶段 ------
 FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /workspace
@@ -24,23 +22,10 @@ COPY <<EOF /root/.m2/settings.xml
 </settings>
 EOF
 
-COPY pom.xml /workspace/pom.xml
-COPY jeepay-core/pom.xml /workspace/jeepay-core/pom.xml
-COPY jeepay-service/pom.xml /workspace/jeepay-service/pom.xml
-COPY jeepay-components/pom.xml /workspace/jeepay-components/pom.xml
-COPY jeepay-components/jeepay-components-mq/pom.xml /workspace/jeepay-components/jeepay-components-mq/pom.xml
-COPY jeepay-components/jeepay-components-oss/pom.xml /workspace/jeepay-components/jeepay-components-oss/pom.xml
-COPY jeepay-manager/pom.xml /workspace/jeepay-manager/pom.xml
+COPY . /workspace
 
-COPY jeepay-core/src /workspace/jeepay-core/src
-COPY jeepay-service/src /workspace/jeepay-service/src
-COPY jeepay-components/jeepay-components-mq/src /workspace/jeepay-components/jeepay-components-mq/src
-COPY jeepay-components/jeepay-components-oss/src /workspace/jeepay-components/jeepay-components-oss/src
-COPY jeepay-manager/src /workspace/jeepay-manager/src
+RUN mvn -B -pl jeepay-manager -am clean package -DskipTests
 
-RUN mvn -X -pl jeepay-manager -am clean package -DskipTests
-
-# ------ 运行阶段 ------
 FROM eclipse-temurin:17-jre-jammy
 
 LABEL maintainer="Jeepay Team"
