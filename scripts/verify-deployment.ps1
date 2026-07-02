@@ -3,12 +3,32 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $composePath = Join-Path $root 'docker-compose.yml'
 $compose = Get-Content -Raw -Encoding UTF8 $composePath
+$coolifyComposePath = Join-Path $root 'docker-compose.coolify.yml'
 
 function Assert-True([bool]$condition, [string]$message) {
     if (-not $condition) {
         throw $message
     }
 }
+
+Assert-True (Test-Path $coolifyComposePath) 'Missing docker-compose.coolify.yml'
+$coolifyCompose = Get-Content -Raw -Encoding UTF8 $coolifyComposePath
+
+Write-Host "=== Checking Coolify Production Topology ==="
+Assert-True ($coolifyCompose -notmatch '(?m)^\s+container_name:') 'Coolify services must not set container_name'
+Assert-True ($coolifyCompose -notmatch '(?m)^\s+ports:') 'Coolify stack must not publish host ports'
+Assert-True ($coolifyCompose -notmatch '(?m)^networks:') 'Coolify stack must use the default network'
+Assert-True ($coolifyCompose -notmatch '\./(logs|conf)/') 'Coolify stack must not bind deployment checkout paths'
+@('MYSQL_ROOT_PASSWORD','MYSQL_PASSWORD','ACTIVEMQ_USER','ACTIVEMQ_PASSWORD','MANAGER_JWT_SECRET','MERCHANT_JWT_SECRET') |
+    ForEach-Object { Assert-True ($coolifyCompose -match "\$\{$($_):\?\}") "Coolify variable $_ must be required" }
+@('mysql','redis','activemq','payment','manager','merchant','ui-payment','ui-manager','ui-merchant') |
+    ForEach-Object {
+        $service = $_ -replace '-', '\-'
+        $block = [regex]::Match($coolifyCompose, "(?ms)^  $service`:.*?(?=^  [a-z]|^volumes:|\Z)").Value
+        Assert-True ($block -match 'healthcheck:') "Coolify service $_ missing healthcheck"
+    }
+@('manager-uploads','merchant-uploads','payment-uploads') |
+    ForEach-Object { Assert-True ($coolifyCompose -match "(?m)^  $_`:") "Missing persistent volume $_" }
 
 Write-Host "=== Checking Compose Topology ==="
 Assert-True ($compose -match '(?m)^  activemq:') 'ActiveMQ service is required'
