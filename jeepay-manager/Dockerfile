@@ -8,13 +8,8 @@ FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /workspace
 
-# 复制 Maven Wrapper 和 POM 文件
-COPY .mvn /workspace/.mvn
-COPY mvnw /workspace/mvnw
-COPY mvnw.cmd /workspace/mvnw.cmd
+# 复制 POM 文件
 COPY pom.xml /workspace/pom.xml
-
-# 复制各模块 POM
 COPY jeepay-core/pom.xml /workspace/jeepay-core/pom.xml
 COPY jeepay-service/pom.xml /workspace/jeepay-service/pom.xml
 COPY jeepay-components/pom.xml /workspace/jeepay-components/pom.xml
@@ -22,8 +17,8 @@ COPY jeepay-components/jeepay-components-mq/pom.xml /workspace/jeepay-components
 COPY jeepay-components/jeepay-components-oss/pom.xml /workspace/jeepay-components/jeepay-components-oss/pom.xml
 COPY jeepay-manager/pom.xml /workspace/jeepay-manager/pom.xml
 
-# 下载依赖（利用 Docker 缓存）
-RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -pl jeepay-manager -am dependency:go-offline
+# 下载依赖（利用 Docker 缓存，使用基础镜像内置的 mvn）
+RUN --mount=type=cache,target=/root/.m2 mvn -B -pl jeepay-manager -am dependency:go-offline
 
 # 复制源码
 COPY jeepay-core/src /workspace/jeepay-core/src
@@ -33,7 +28,7 @@ COPY jeepay-components/jeepay-components-oss/src /workspace/jeepay-components/je
 COPY jeepay-manager/src /workspace/jeepay-manager/src
 
 # 构建
-RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -pl jeepay-manager -am clean package -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn -B -pl jeepay-manager -am clean package -DskipTests
 
 # ------ 运行阶段 ------
 FROM eclipse-temurin:17-jre-jammy
