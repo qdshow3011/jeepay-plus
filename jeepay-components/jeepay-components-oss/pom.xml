@@ -51,8 +51,8 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
       <scope>provided</scope> <!-- 仅编译依赖该jar， 运行时存在 -->
     </dependency>
 

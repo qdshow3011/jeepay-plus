@@ -35,6 +35,10 @@
             <groupId>com.jeequan</groupId>
             <artifactId>jeepay-components-mq</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
+        </dependency>
 
         <!-- 依赖 sping-boot-web -->
         <dependency>
@@ -73,7 +77,7 @@
         <!-- JWT  -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
+            <artifactId>jjwt-api</artifactId>
         </dependency>
 
         <!-- spring-aop -->
@@ -103,7 +107,7 @@
         <!-- Knife4j  -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
         </dependency>
 
     </dependencies>
