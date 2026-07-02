@@ -7,7 +7,7 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
       MYSQL_USER: ${MYSQL_USER:-jeepay}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
-    ports:
+    expose:
       - "3306"
     volumes:
       - mysql:/var/lib/mysql
@@ -18,10 +18,11 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
+    restart: unless-stopped
 
   redis:
     image: redis:7.4-alpine
-    ports:
+    expose:
       - "6379"
     volumes:
       - redis:/data
@@ -31,25 +32,26 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    restart: unless-stopped
 
   activemq:
     build:
       context: ./docker/activemq
       dockerfile: Dockerfile
     environment:
-      ACTIVEMQ_USER: ${ACTIVEMQ_USER:-system}
+      ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
-    ports:
-      - "8161"
+    expose:
       - "61616"
     volumes:
       - activemq:/opt/activemq/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8161/admin/ || exit 1"]
+      test: ["CMD-SHELL", "nc -z localhost 61616 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 40s
+    restart: unless-stopped
 
   payment:
     build:
@@ -63,10 +65,10 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       ACTIVEMQ_HOST: activemq
-      ACTIVEMQ_USER: ${ACTIVEMQ_USER:-system}
+      ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
-      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:-http://localhost:9226,http://localhost:9227,http://localhost:9228}
-    ports:
+      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:?}
+    expose:
       - "9216"
     depends_on:
       mysql:
@@ -78,9 +80,8 @@ services:
     volumes:
       - payment-logs:/jeepayhomes/service/logs
       - payment-uploads:/jeepayhomes/service/uploads
-      - ./conf/payment/application.yml:/jeepayhomes/service/app/application.yml:ro
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9216/ || wget -q --spider http://localhost:9216/ || exit 1"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9216/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -99,11 +100,11 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       ACTIVEMQ_HOST: activemq
-      ACTIVEMQ_USER: ${ACTIVEMQ_USER:-system}
+      ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
       MANAGER_JWT_SECRET: ${MANAGER_JWT_SECRET:?MANAGER_JWT_SECRET is required}
-      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:-http://localhost:9226,http://localhost:9227,http://localhost:9228}
-    ports:
+      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:?}
+    expose:
       - "9217"
     depends_on:
       mysql:
@@ -115,9 +116,8 @@ services:
     volumes:
       - manager-logs:/jeepayhomes/service/logs
       - manager-uploads:/jeepayhomes/service/uploads
-      - ./conf/manager/application.yml:/jeepayhomes/service/app/application.yml:ro
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9217/ || wget -q --spider http://localhost:9217/ || exit 1"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9217/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -136,11 +136,11 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       ACTIVEMQ_HOST: activemq
-      ACTIVEMQ_USER: ${ACTIVEMQ_USER:-system}
+      ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
       MERCHANT_JWT_SECRET: ${MERCHANT_JWT_SECRET:?MERCHANT_JWT_SECRET is required}
-      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:-http://localhost:9226,http://localhost:9227,http://localhost:9228}
-    ports:
+      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:?}
+    expose:
       - "9218"
     depends_on:
       mysql:
@@ -152,9 +152,8 @@ services:
     volumes:
       - merchant-logs:/jeepayhomes/service/logs
       - merchant-uploads:/jeepayhomes/service/uploads
-      - ./conf/merchant/application.yml:/jeepayhomes/service/app/application.yml:ro
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9218/ || wget -q --spider http://localhost:9218/ || exit 1"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9218/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -170,7 +169,7 @@ services:
     environment:
       BACKEND_HOST: payment:9216
       PORT: 80
-    ports:
+    expose:
       - "80"
     depends_on:
       payment:
@@ -192,7 +191,7 @@ services:
     environment:
       BACKEND_HOST: manager:9217
       PORT: 80
-    ports:
+    expose:
       - "80"
     depends_on:
       manager:
@@ -214,7 +213,7 @@ services:
     environment:
       BACKEND_HOST: merchant:9218
       PORT: 80
-    ports:
+    expose:
       - "80"
     depends_on:
       merchant:

@@ -6,7 +6,7 @@ Make `codex/full-modernization` deployable from a clean Git checkout through Coo
 
 ## Architecture
 
-Keep `docker-compose.yml` for local development and add `docker-compose.coolify.yml` as the production source of truth. The production stack contains MySQL, Redis, ActiveMQ, three Spring Boot services, and three Nginx UI services. Only the UI services receive Coolify domains; API and WebSocket traffic reaches the backend through each UI's same-origin Nginx proxy.
+Use `docker-compose.yml` directly as the Coolify production source of truth. The stack contains MySQL, Redis, ActiveMQ, three Spring Boot services, and three Nginx UI services. Only the UI services receive Coolify domains; API and WebSocket traffic reaches the backend through each UI's same-origin Nginx proxy.
 
 ## Build
 
@@ -45,7 +45,7 @@ Keep `docker-compose.yml` for local development and add `docker-compose.coolify.
 
 ## Verification
 
-Extend `scripts/verify-deployment.ps1` to assert that the Coolify Compose file:
+Extend `scripts/verify-deployment.ps1` to assert that `docker-compose.yml`:
 
 - performs clean-clone backend builds;
 - has no `container_name` or public internal-service port mappings;
@@ -57,4 +57,4 @@ Run Maven tests, frontend clean builds, Compose parsing, deployment/security che
 
 ## Deployment Procedure
 
-Create a Coolify application using the Docker Compose build pack, set the compose path to `/docker-compose.coolify.yml`, configure the required runtime variables, and assign HTTPS domains to the three UI services on container port 80. No public domains are assigned to infrastructure or backend services.
+Create a Coolify application using the Docker Compose build pack and the default `/docker-compose.yml` path, configure the required runtime variables, and assign HTTPS domains to the three UI services on container port 80. No public domains are assigned to infrastructure or backend services.

@@ -4,7 +4,7 @@
 
 **Goal:** Make Jeepay deploy reliably and securely from a clean Git checkout using Coolify's Docker Compose build pack.
 
-**Architecture:** Add a production-only `docker-compose.coolify.yml`, convert backend images to Maven multi-stage builds, and expose only three Nginx UI services. Infrastructure and APIs remain on the Compose private network with required secrets, health-gated startup, and named storage.
+**Architecture:** Use `docker-compose.yml` directly for Coolify, convert backend images to Maven multi-stage builds, and expose only three Nginx UI services. Infrastructure and APIs remain on the Compose private network with required secrets, health-gated startup, and named storage.
 
 **Tech Stack:** Docker Compose, Coolify, Java 17, Maven 3.9, Spring Boot Actuator, Node.js 20, npm workspaces, Nginx, MySQL 8.4, Redis 7.4, ActiveMQ.
 
@@ -16,8 +16,8 @@
 - Modify: `scripts/verify-deployment.ps1`
 - Test: `scripts/verify-deployment.ps1`
 
-- [ ] Add assertions requiring `docker-compose.coolify.yml`, health checks, required-variable syntax, named upload volumes, and no `container_name`, custom network, or host `ports` entries.
-- [ ] Run `./scripts/verify-deployment.ps1` and confirm it fails because the Coolify Compose file is absent.
+- [ ] Add assertions requiring health checks, required-variable syntax, named upload volumes, and no `container_name`, custom network, or host `ports` entries in `docker-compose.yml`.
+- [ ] Run `./scripts/verify-deployment.ps1` and confirm it fails because the existing Compose topology is not Coolify-safe.
 - [ ] Commit as `test: define Coolify deployment invariants`.
 
 ### Task 2: Make backend images build from a clean checkout
@@ -55,13 +55,13 @@
 ### Task 4: Create the production Coolify stack
 
 **Files:**
-- Create: `docker-compose.coolify.yml`
+- Modify: `docker-compose.yml`
 
 - [ ] Define MySQL, Redis, and ActiveMQ health checks with named data volumes and `${VAR:?}` secrets.
 - [ ] Define the three backend builds, environment variables, health checks, named log/upload volumes, health-gated dependencies, and `restart: unless-stopped`.
 - [ ] Define the three UI builds on port 80 with internal backend hostnames and no host port mappings.
 - [ ] Omit `container_name`, custom networks, and all `ports` keys.
-- [ ] Run deployment regression checks and `docker compose -f docker-compose.coolify.yml config --quiet` where Docker is available.
+- [ ] Run deployment regression checks and `docker compose config --quiet` where Docker is available.
 - [ ] Commit as `deploy: add secure Coolify compose stack`.
 
 ### Task 5: Make frontend builds reproducible
