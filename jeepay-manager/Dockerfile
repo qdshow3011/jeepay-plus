@@ -17,9 +17,6 @@ COPY jeepay-components/jeepay-components-mq/pom.xml /workspace/jeepay-components
 COPY jeepay-components/jeepay-components-oss/pom.xml /workspace/jeepay-components/jeepay-components-oss/pom.xml
 COPY jeepay-manager/pom.xml /workspace/jeepay-manager/pom.xml
 
-# 下载依赖（利用 Docker 缓存，使用基础镜像内置的 mvn）
-RUN --mount=type=cache,target=/root/.m2 mvn -B -pl jeepay-manager -am dependency:go-offline
-
 # 复制源码
 COPY jeepay-core/src /workspace/jeepay-core/src
 COPY jeepay-service/src /workspace/jeepay-service/src
@@ -27,7 +24,7 @@ COPY jeepay-components/jeepay-components-mq/src /workspace/jeepay-components/jee
 COPY jeepay-components/jeepay-components-oss/src /workspace/jeepay-components/jeepay-components-oss/src
 COPY jeepay-manager/src /workspace/jeepay-manager/src
 
-# 构建
+# 构建（使用基础镜像内置的 mvn，利用缓存）
 RUN --mount=type=cache,target=/root/.m2 mvn -B -pl jeepay-manager -am clean package -DskipTests
 
 # ------ 运行阶段 ------
