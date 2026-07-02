@@ -5,7 +5,7 @@
 # ------   START   ------
 
 # 基础镜像来自： https://hub.docker.com/ 官方OFFICIAL
-FROM openjdk:8u342-jdk
+FROM eclipse-temurin:17-jre-jammy
 
 MAINTAINER Terrfly
 
@@ -28,7 +28,7 @@ VOLUME ["/jeepayhomes/service/logs", "/jeepayhomes/service/uploads"]
 RUN mkdir /jeepayhomes/service/app -p
 
 # 安装
-COPY ./target/jeepay-manager.jar /jeepayhomes/service/app/jeepay-manager.jar
+COPY ./jeepay-manager/target/jeepay-manager.jar /jeepayhomes/service/app/jeepay-manager.jar
 
 # 设置工作目录
 WORKDIR /jeepayhomes/service/app
