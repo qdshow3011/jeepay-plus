@@ -74,7 +74,9 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .anyRequest().authenticated())
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

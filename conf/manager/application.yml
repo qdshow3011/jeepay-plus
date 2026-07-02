@@ -117,3 +117,14 @@ isys:
   mq:
     vender: activeMQ  # 唯一支持的消息中间件
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+
