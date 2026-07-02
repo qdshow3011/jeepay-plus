@@ -1,42 +1,61 @@
 #
-#   jeepay-payment（商户平台） java程序镜像构建脚本   .Power by terrfly
+#   jeepay-payment（支付网关）Java 程序镜像构建脚本
+#   支持多阶段构建：Maven 构建 + JRE 运行
 #
 
-# ------   START   ------
+# ------ 构建阶段 ------
+FROM maven:3.9-eclipse-temurin-17 AS builder
 
-# 基础镜像来自： https://hub.docker.com/ 官方OFFICIAL
+WORKDIR /workspace
+
+# 复制 Maven Wrapper 和 POM 文件
+COPY .mvn /workspace/.mvn
+COPY mvnw /workspace/mvnw
+COPY mvnw.cmd /workspace/mvnw.cmd
+COPY pom.xml /workspace/pom.xml
+
+# 复制各模块 POM
+COPY jeepay-core/pom.xml /workspace/jeepay-core/pom.xml
+COPY jeepay-service/pom.xml /workspace/jeepay-service/pom.xml
+COPY jeepay-components/pom.xml /workspace/jeepay-components/pom.xml
+COPY jeepay-components/jeepay-components-mq/pom.xml /workspace/jeepay-components/jeepay-components-mq/pom.xml
+COPY jeepay-components/jeepay-components-oss/pom.xml /workspace/jeepay-components/jeepay-components-oss/pom.xml
+COPY jeepay-payment/pom.xml /workspace/jeepay-payment/pom.xml
+
+# 下载依赖（利用 Docker 缓存）
+RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -pl jeepay-payment -am dependency:go-offline
+
+# 复制源码
+COPY jeepay-core/src /workspace/jeepay-core/src
+COPY jeepay-service/src /workspace/jeepay-service/src
+COPY jeepay-components/jeepay-components-mq/src /workspace/jeepay-components/jeepay-components-mq/src
+COPY jeepay-components/jeepay-components-oss/src /workspace/jeepay-components/jeepay-components-oss/src
+COPY jeepay-payment/src /workspace/jeepay-payment/src
+
+# 构建
+RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -pl jeepay-payment -am clean package -DskipTests
+
+# ------ 运行阶段 ------
 FROM eclipse-temurin:17-jre-jammy
 
-MAINTAINER Terrfly
+LABEL maintainer="Jeepay Team"
 
-# 配置环境变量，支持中文。
 ENV LANG=C.UTF-8
-
-# 设置时区 东八区， 解决日志时间不正确的问题。
 ENV TZ=Asia/Shanghai
 
-# 对外映射的端口 ( 不明确EXPOSE 也不影响映射  )
 EXPOSE 9216
 
-# 挂载目录 "/jeepayhomes/service/app/application.yml 这个文件不能写到VOLUME中， 否则将映射成为了目录导致启动异常。
 VOLUME ["/jeepayhomes/service/logs", "/jeepayhomes/service/uploads"]
 
-# 使用jeepay用户启动。 ( 需要 RUN adduser等一系列操作 )
-# USER jeepay:jeepay
+RUN mkdir -p /jeepayhomes/service/app
 
-# 创建目录
-RUN mkdir /jeepayhomes/service/app -p
+# 从构建阶段复制 jar
+COPY --from=builder /workspace/jeepay-payment/target/jeepay-payment.jar /jeepayhomes/service/app/jeepay-payment.jar
 
-# 安装
-COPY ./jeepay-payment/target/jeepay-payment.jar /jeepayhomes/service/app/jeepay-payment.jar
-
-# 设置工作目录
 WORKDIR /jeepayhomes/service/app
 
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+  CMD curl -f http://localhost:9216/ || wget -q --spider http://localhost:9216/ || exit 1
+
 CMD ["java", "-jar", "jeepay-payment.jar"]
-
-# ------   END   ------
-
-
-
-
