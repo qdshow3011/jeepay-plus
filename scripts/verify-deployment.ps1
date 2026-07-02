@@ -35,6 +35,8 @@ Get-ChildItem (Join-Path $root 'conf') -Filter application.yml -Recurse |
     }
 
 Assert-True ($compose -notmatch 'nginx\.tar\.gz') 'Compose references missing nginx.tar.gz'
-Assert-True ($compose -notmatch '(?m)^\s+dockerfile:\s+Dockerfile\s*$') 'Compose references an ambiguous root Dockerfile'
+@('jeepay-payment', 'jeepay-manager', 'jeepay-merchant') | ForEach-Object {
+    Assert-True ($compose -match "dockerfile:\s+$_/Dockerfile") "Compose does not reference $_/Dockerfile"
+}
 
 Write-Host 'Deployment verification passed.'

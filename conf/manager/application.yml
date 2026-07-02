@@ -30,9 +30,9 @@ spring:
       number_format: '#' #数字格式进行原样显示，不加格式化字符例如  100,00
   datasource:
     # yml填写url连接串， 无需将&符号进行转义
-    url: jdbc:mysql://mysql8:3306/jeepaydb?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: jeepaydb123456
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/${MYSQL_DATABASE:jeepaydb}?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:jeepay}
+    password: ${MYSQL_PASSWORD}
     druid:
       # 连接池配置项
       initial-size: 5 #初始化时建立物理连接的个数
@@ -55,7 +55,7 @@ spring:
   cache:
     type: redis
   redis:
-    host: redis6
+    host: ${REDIS_HOST:redis}
     port: 6379
     database: 1    #1库：运营平台  #2库：商户系统 #3库：支付网关
     timeout: 1000
@@ -63,10 +63,10 @@ spring:
 
 # #activeMQ配置 ( 注意： activeMQ配置项需在spring的下级 )
   activemq:
-    broker-url: failover:(tcp://activemq5:61616?wireFormat.maxInactivityDuration=0)  #连接地址
+    broker-url: failover:(tcp://${ACTIVEMQ_HOST:activemq}:61616?wireFormat.maxInactivityDuration=0)  #连接地址
     in-memory: false # Jeepay项目不可使用内存模式， 需要连接多个消费者。
-    user: system # activeMQ默认无需账密认证。 打开认证：activemq.xml添加simpleAuthenticationPlugin标签，账密在credentials.properties文件。
-    password: manager
+    user: ${ACTIVEMQ_USER:system} # ActiveMQ认证账号由环境变量注入。
+    password: ${ACTIVEMQ_PASSWORD}
     pool:
       enabled: true
       max-connections: 10
@@ -110,7 +110,7 @@ knife4j:
 #系统业务参数
 isys:
 
-  jwt-secret: t7w3P8X6472qWc3u #生成jwt的秘钥。 要求每个系统有单独的秘钥管理机制。
+  jwt-secret: ${MANAGER_JWT_SECRET} # 生产环境必须提供至少32字节的随机密钥。
 
   #是否允许跨域请求 [生产环境建议关闭， 若api与前端项目没有在同一个域名下时，应开启此配置或在nginx统一配置允许跨域]
   allow-cors: true
