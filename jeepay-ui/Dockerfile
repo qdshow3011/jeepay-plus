@@ -3,12 +3,16 @@
 FROM node:20-alpine AS builder
 
 ARG PLATFORM
+ARG NPM_REGISTRY=https://registry.npmjs.org
 
 WORKDIR /workspace
 
 COPY . /workspace
 
-RUN cd /workspace/jeepay-ui-${PLATFORM} && npm install && npm run build
+RUN npm config set registry ${NPM_REGISTRY} \
+    && cd /workspace/jeepay-ui-${PLATFORM} \
+    && npm ci \
+    && npm run build
 
 
 # 运行阶段
