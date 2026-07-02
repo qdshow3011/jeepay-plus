@@ -79,7 +79,7 @@ CREATE TABLE `t_sys_user_auth` (
 DROP TABLE IF EXISTS `t_sys_user_role_rela`;
 CREATE TABLE `t_sys_user_role_rela` (
   `user_id` BIGINT(20) NOT NULL COMMENT '用户ID',
-  `role_id`VARCHAR(32) NOT NULL COMMENT '角色ID',
+  `role_id` VARCHAR(32) NOT NULL COMMENT '角色ID',
   PRIMARY KEY (`user_id`, `role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='操作员<->角色 关联表';
 
