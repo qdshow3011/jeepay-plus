@@ -168,8 +168,6 @@
             <version>3.13.0</version>
         </dependency>
 
-        <!-- 添加对rocketMQ的支持  -->
-        <!-- 添加对AliyunRocketMQ的支持 -->
         <!-- Knife4j  -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
