@@ -35,12 +35,14 @@ services:
     image: jeepay-activemq:latest
     hostname: activemq
     container_name: jeepay-activemq
+    environment:
+      ACTIVEMQ_USER: ${ACTIVEMQ_USER}
+      ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD}
     ports:
       - "8161:8161"
       - "61616:61616"
     volumes:
       - activemq:/opt/activemq/data
-      - ./docker/activemq/activemq.xml:/opt/activemq/conf/activemq.xml:ro
     networks:
       - jeepay
 

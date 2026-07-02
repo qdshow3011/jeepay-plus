@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-alpine:13
+FROM eclipse-temurin:17-jre-alpine
 
 ENV ACTIVEMQ_VERSION 5.16.4
 ENV ACTIVEMQ apache-activemq-$ACTIVEMQ_VERSION
@@ -21,4 +21,4 @@ EXPOSE 1883 5672 8161 61613 61614 61616
 USER activemq
 WORKDIR $ACTIVEMQ_HOME
 
-CMD ["/bin/sh", "-c", "bin/activemq console"]
+CMD ["/bin/sh", "-c", "printf 'activemq.username=%s\nactivemq.password=%s\n' \"$ACTIVEMQ_USER\" \"$ACTIVEMQ_PASSWORD\" > conf/credentials.properties && bin/activemq console"]
