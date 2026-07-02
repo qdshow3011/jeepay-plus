@@ -6,7 +6,6 @@ FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /workspace
 
-RUN mkdir -p /root/.m2
 COPY <<EOF /root/.m2/settings.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -22,22 +21,7 @@ COPY <<EOF /root/.m2/settings.xml
 </settings>
 EOF
 
-COPY pom.xml /workspace/pom.xml
-COPY jeepay-z-codegen/pom.xml /workspace/jeepay-z-codegen/pom.xml
-COPY jeepay-core/pom.xml /workspace/jeepay-core/pom.xml
-COPY jeepay-service/pom.xml /workspace/jeepay-service/pom.xml
-COPY jeepay-components/pom.xml /workspace/jeepay-components/pom.xml
-COPY jeepay-components/jeepay-components-mq/pom.xml /workspace/jeepay-components/jeepay-components-mq/pom.xml
-COPY jeepay-components/jeepay-components-oss/pom.xml /workspace/jeepay-components/jeepay-components-oss/pom.xml
-COPY jeepay-manager/pom.xml /workspace/jeepay-manager/pom.xml
-
-RUN mvn -B -pl jeepay-manager -am dependency:go-offline || true
-
-COPY jeepay-core/src /workspace/jeepay-core/src
-COPY jeepay-service/src /workspace/jeepay-service/src
-COPY jeepay-components/jeepay-components-mq/src /workspace/jeepay-components/jeepay-components-mq/src
-COPY jeepay-components/jeepay-components-oss/src /workspace/jeepay-components/jeepay-components-oss/src
-COPY jeepay-manager/src /workspace/jeepay-manager/src
+COPY . /workspace
 
 RUN mvn -B -pl jeepay-manager -am clean package -DskipTests
 
