@@ -14,10 +14,12 @@
     "dev:merchant": "cd jeepay-ui-merchant && npm run dev",
     "build:cashier": "cd jeepay-ui-cashier && npm run build",
     "build:manager": "cd jeepay-ui-manager && npm run build",
-    "build:merchant": "cd jeepay-ui-merchant && npm run build"
+    "build:merchant": "cd jeepay-ui-merchant && npm run build",
+    "build": "npm run build:cashier && npm run build:manager && npm run build:merchant",
+    "check": "npm run build"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20 <23"
   },
   "author": "",
   "license": "MIT"

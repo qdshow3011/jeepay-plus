@@ -30,35 +30,23 @@ jeepay-ui
 | Vue Router | 4.x |
 | Vite | 4.x（cashier）/ 2.x（manager/merchant） |
 | Ant Design Vue | 4.2（manager/merchant） |
-| Node.js | >= 16 |
+| Node.js | 20 LTS |
 
 ## 快速开始
 
 ### 环境要求
 
-- Node.js >= 18（推荐 20 LTS）
+- Node.js 20 LTS
 - npm >= 7
 
 ### 安装与运行
 
-以运营平台为例（其他子项目操作相同）：
+在仓库根目录统一安装并构建三个 workspace：
 
 ```bash
-# 进入子项目目录
-cd jeepay-ui-manager
-
-# 安装依赖
+# 在 jeepay-ui 目录
 npm install
-
-# 修改开发环境后端地址
-# 编辑 .env.development 中的 VITE_API_BASE_URL
-
-# 本地开发
-npm run dev
-
-# 生产构建
 npm run build
-# 产物输出到 dist/ 目录
 ```
 
 ### 各子项目命令对照
