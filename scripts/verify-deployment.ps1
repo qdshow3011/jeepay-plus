@@ -69,6 +69,11 @@ if ($compose -match 'nc -z localhost 61616') {
 $managerDockerfile = Get-Content -Raw -Encoding UTF8 (Join-Path $root 'jeepay-manager/Dockerfile')
 Assert-True ($managerDockerfile -match 'fontconfig' -and $managerDockerfile -match 'fonts-dejavu-core') 'Manager captcha image requires fontconfig and fonts-dejavu-core'
 
+@('jeepay-manager', 'jeepay-merchant', 'jeepay-payment') | ForEach-Object {
+    $modulePom = Get-Content -Raw -Encoding UTF8 (Join-Path $root "$_/pom.xml")
+    Assert-True ($modulePom -match '<artifactId>spring-boot-starter-validation</artifactId>') "Module $_ must include a Bean Validation implementation at runtime"
+}
+
 @('jeepay-payment', 'jeepay-manager', 'jeepay-merchant') | ForEach-Object {
     Assert-True ($compose -match "dockerfile:\s+$_/Dockerfile") "Compose does not reference $_/Dockerfile"
 }
