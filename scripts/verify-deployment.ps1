@@ -66,6 +66,9 @@ if ($compose -match 'nc -z localhost 61616') {
     Assert-True ($activeMqDockerfile -match 'netcat-openbsd') 'ActiveMQ healthcheck requires netcat-openbsd in the image'
 }
 
+$managerDockerfile = Get-Content -Raw -Encoding UTF8 (Join-Path $root 'jeepay-manager/Dockerfile')
+Assert-True ($managerDockerfile -match 'fontconfig' -and $managerDockerfile -match 'fonts-dejavu-core') 'Manager captcha image requires fontconfig and fonts-dejavu-core'
+
 @('jeepay-payment', 'jeepay-manager', 'jeepay-merchant') | ForEach-Object {
     Assert-True ($compose -match "dockerfile:\s+$_/Dockerfile") "Compose does not reference $_/Dockerfile"
 }
@@ -81,6 +84,8 @@ Write-Host "=== Checking Healthchecks ==="
     }
 
 Write-Host "=== Checking Configuration Files ==="
+$legacyRedisBindings = & rg -n 'spring\.redis\.' (Join-Path $root 'jeepay-manager/src/main/java') (Join-Path $root 'jeepay-merchant/src/main/java') (Join-Path $root 'jeepay-payment/src/main/java')
+Assert-True ($LASTEXITCODE -ne 0) "Legacy Spring Boot 2 Redis bindings remain:`n$legacyRedisBindings"
 @(
     'conf/payment/application.yml',
     'conf/manager/application.yml',

@@ -7,7 +7,7 @@ RUN mvn -B -pl jeepay-manager -am package -DskipTests
 FROM eclipse-temurin:17-jre-jammy
 LABEL maintainer="Jeepay Team"
 ENV LANG=C.UTF-8 TZ=Asia/Shanghai
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
+RUN apt-get update && apt-get install -y --no-install-recommends curl fontconfig fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd --system jeepay && useradd --system --gid jeepay --home /jeepayhomes jeepay \
     && mkdir -p /jeepayhomes/service/app /jeepayhomes/service/logs /jeepayhomes/service/uploads \
