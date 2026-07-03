@@ -60,6 +60,11 @@ Get-ChildItem $root -Filter Dockerfile -Recurse |
         Assert-True ($dockerfile -notmatch '(?m)^COPY\s+<<') "BuildKit-incompatible heredoc COPY in $($_.FullName)"
     }
 
+$activeMqDockerfile = Get-Content -Raw -Encoding UTF8 (Join-Path $root 'docker/activemq/Dockerfile')
+if ($compose -match 'nc -z localhost 61616') {
+    Assert-True ($activeMqDockerfile -match 'netcat-openbsd') 'ActiveMQ healthcheck requires netcat-openbsd in the image'
+}
+
 @('jeepay-payment', 'jeepay-manager', 'jeepay-merchant') | ForEach-Object {
     Assert-True ($compose -match "dockerfile:\s+$_/Dockerfile") "Compose does not reference $_/Dockerfile"
 }

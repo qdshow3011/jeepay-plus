@@ -4,8 +4,7 @@ ENV ACTIVEMQ_VERSION 5.16.4
 ENV ACTIVEMQ apache-activemq-$ACTIVEMQ_VERSION
 ENV ACTIVEMQ_HOME /opt/activemq
 
-RUN apk add --update curl && \
-    rm -rf /var/cache/apk/* && \
+RUN apk add --no-cache curl netcat-openbsd && \
     mkdir -p /opt && \
     curl -sSL --retry 5 --retry-delay 3 https://archive.apache.org/dist/activemq/$ACTIVEMQ_VERSION/$ACTIVEMQ-bin.tar.gz | tar -xvz -C /opt && \
     ln -s /opt/$ACTIVEMQ $ACTIVEMQ_HOME && \
