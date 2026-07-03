@@ -89,6 +89,15 @@ Write-Host "=== Checking Healthchecks ==="
     }
 
 Write-Host "=== Checking Configuration Files ==="
+$serviceSources = Get-ChildItem (Join-Path $root 'jeepay-service/src/main/java') -Filter '*Service.java' -Recurse
+$serviceSources | ForEach-Object {
+    $source = Get-Content -Raw -Encoding UTF8 $_.FullName
+    $classMatch = [regex]::Match($source, 'public\s+class\s+(\w+Service)\b')
+    if ($classMatch.Success) {
+        $serviceClass = [regex]::Escape($classMatch.Groups[1].Value)
+        Assert-True ($source -notmatch "(?m)private\s+$serviceClass\s+\w+\s*;") "Service $($classMatch.Groups[1].Value) must not inject itself"
+    }
+}
 $legacyRedisBindings = & rg -n 'spring\.redis\.' (Join-Path $root 'jeepay-manager/src/main/java') (Join-Path $root 'jeepay-merchant/src/main/java') (Join-Path $root 'jeepay-payment/src/main/java')
 Assert-True ($LASTEXITCODE -ne 0) "Legacy Spring Boot 2 Redis bindings remain:`n$legacyRedisBindings"
 @(
