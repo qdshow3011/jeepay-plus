@@ -16,6 +16,7 @@ Write-Host "=== Checking Coolify Production Topology ==="
 Assert-True ($coolifyCompose -notmatch '(?m)^\s+container_name:') 'Coolify services must not set container_name'
 Assert-True ($coolifyCompose -notmatch '(?m)^\s+ports:') 'Coolify stack must not publish host ports'
 Assert-True ($coolifyCompose -notmatch '(?m)^networks:') 'Coolify stack must use the default network'
+Assert-True ($coolifyCompose -notmatch 'condition:\s*service_healthy') 'Coolify deployment must not block compose up on dependency health'
 Assert-True ($coolifyCompose -notmatch '\./(logs|conf)/') 'Coolify stack must not bind deployment checkout paths'
 Assert-True ($coolifyCompose -notmatch '(?m)^\s+-\s+\./') 'Coolify stack must not use relative host bind mounts'
 @('MYSQL_ROOT_PASSWORD','MYSQL_PASSWORD','ACTIVEMQ_USER','ACTIVEMQ_PASSWORD','MANAGER_JWT_SECRET','MERCHANT_JWT_SECRET') |

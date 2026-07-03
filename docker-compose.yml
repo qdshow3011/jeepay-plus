@@ -72,12 +72,9 @@ services:
     expose:
       - "9216"
     depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      activemq:
-        condition: service_healthy
+      - mysql
+      - redis
+      - activemq
     volumes:
       - payment-logs:/jeepayhomes/service/logs
       - payment-uploads:/jeepayhomes/service/uploads
@@ -108,12 +105,9 @@ services:
     expose:
       - "9217"
     depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      activemq:
-        condition: service_healthy
+      - mysql
+      - redis
+      - activemq
     volumes:
       - manager-logs:/jeepayhomes/service/logs
       - manager-uploads:/jeepayhomes/service/uploads
@@ -144,12 +138,9 @@ services:
     expose:
       - "9218"
     depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      activemq:
-        condition: service_healthy
+      - mysql
+      - redis
+      - activemq
     volumes:
       - merchant-logs:/jeepayhomes/service/logs
       - merchant-uploads:/jeepayhomes/service/uploads
@@ -173,8 +164,7 @@ services:
     expose:
       - "80"
     depends_on:
-      payment:
-        condition: service_healthy
+      - payment
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1"]
       interval: 30s
@@ -195,8 +185,7 @@ services:
     expose:
       - "80"
     depends_on:
-      manager:
-        condition: service_healthy
+      - manager
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1"]
       interval: 30s
@@ -217,8 +206,7 @@ services:
     expose:
       - "80"
     depends_on:
-      merchant:
-        condition: service_healthy
+      - merchant
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1"]
       interval: 30s
