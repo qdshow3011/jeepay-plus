@@ -53,6 +53,13 @@ Write-Host "=== Checking Dockerfile References ==="
     Assert-True (Test-Path (Join-Path $root $_)) "Missing $_"
 }
 
+Get-ChildItem $root -Filter Dockerfile -Recurse |
+    Where-Object FullName -notmatch '[\\/]target[\\/]' |
+    ForEach-Object {
+        $dockerfile = Get-Content -Raw -Encoding UTF8 $_.FullName
+        Assert-True ($dockerfile -notmatch '(?m)^COPY\s+<<') "BuildKit-incompatible heredoc COPY in $($_.FullName)"
+    }
+
 @('jeepay-payment', 'jeepay-manager', 'jeepay-merchant') | ForEach-Object {
     Assert-True ($compose -match "dockerfile:\s+$_/Dockerfile") "Compose does not reference $_/Dockerfile"
 }
