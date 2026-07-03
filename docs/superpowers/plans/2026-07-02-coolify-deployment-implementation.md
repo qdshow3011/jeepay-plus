@@ -69,11 +69,10 @@
 **Files:**
 - Modify: `jeepay-ui/Dockerfile`
 - Modify: `jeepay-ui/package.json`
-- Create or regenerate: `jeepay-ui/package-lock.json`
-- Remove: child workspace lockfiles after root lock generation succeeds
+- Verify: child workspace `package-lock.json` files
 
-- [ ] Generate the root workspace lock using the official npm registry.
-- [ ] Change the image build to `npm ci --workspace jeepay-ui-${PLATFORM}` and make `NPM_REGISTRY` a build argument.
+- [ ] Verify each child lock matches its package manifest.
+- [ ] Change the image build to run `npm ci` in the selected child workspace and make `NPM_REGISTRY` a build argument.
 - [ ] Build cashier, manager, and merchant production assets.
 - [ ] Commit as `build: make Coolify frontend builds reproducible`.
 

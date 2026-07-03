@@ -12,7 +12,7 @@ Use `docker-compose.yml` directly as the Coolify production source of truth. The
 
 - Replace the three backend Dockerfiles with Java 17 Maven multi-stage builds that work from a clean clone.
 - Add a root `.dockerignore` to exclude Git metadata, IDE files, logs, frontend generated files, and unrelated build output while retaining Maven sources.
-- Build frontend workspaces with Node 20 and reproducible lockfiles using `npm ci`; make the npm registry configurable instead of hard-coding a mirror.
+- Build each frontend workspace with Node 20 and its committed lockfile using `npm ci`; make the npm registry configurable instead of hard-coding a mirror.
 - Preserve runtime images as Java 17 JRE and Nginx Alpine images.
 
 ## Runtime and Networking

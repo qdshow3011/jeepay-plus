@@ -17,6 +17,7 @@ Assert-True ($coolifyCompose -notmatch '(?m)^\s+container_name:') 'Coolify servi
 Assert-True ($coolifyCompose -notmatch '(?m)^\s+ports:') 'Coolify stack must not publish host ports'
 Assert-True ($coolifyCompose -notmatch '(?m)^networks:') 'Coolify stack must use the default network'
 Assert-True ($coolifyCompose -notmatch '\./(logs|conf)/') 'Coolify stack must not bind deployment checkout paths'
+Assert-True ($coolifyCompose -notmatch '(?m)^\s+-\s+\./') 'Coolify stack must not use relative host bind mounts'
 @('MYSQL_ROOT_PASSWORD','MYSQL_PASSWORD','ACTIVEMQ_USER','ACTIVEMQ_PASSWORD','MANAGER_JWT_SECRET','MERCHANT_JWT_SECRET') |
     ForEach-Object { Assert-True ($coolifyCompose -match "\$\{$($_):\?[^}]*\}") "Coolify variable $_ must be required" }
 @('mysql','redis','activemq','payment','manager','merchant','ui-payment','ui-manager','ui-merchant') |
@@ -42,6 +43,7 @@ Assert-True ($compose -match 'restart:\s+unless-stopped') 'Restart policy requir
 
 Write-Host "=== Checking Dockerfile References ==="
 @(
+    'docker/mysql/Dockerfile',
     'docker/activemq/Dockerfile',
     'jeepay-payment/Dockerfile',
     'jeepay-manager/Dockerfile',
