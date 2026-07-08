@@ -24,6 +24,12 @@
             <artifactId>jeepay-service</artifactId>
         </dependency>
 
+        <!-- Actuator for health checks -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- 依赖[ oss ]包  -->
         <dependency>
             <groupId>com.jeequan</groupId>
@@ -61,11 +67,14 @@
                     <groupId>com.fasterxml.jackson.module</groupId>
                     <artifactId>jackson-module-parameter-names</artifactId>
                 </exclusion>
-                <exclusion>  <!-- hibernate.validator插件一般不使用 -->
-                    <groupId>org.hibernate.validator</groupId>
-                    <artifactId>hibernate-validator</artifactId>
-                </exclusion>
+
             </exclusions>
+        </dependency>
+
+        <!-- Bean Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- spring-security  -->

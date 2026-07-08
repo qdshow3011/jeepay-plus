@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2021-2031, 河北计全科技有限公司 (https://www.jeequan.com & jeequan@126.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
@@ -24,6 +24,7 @@ import com.jeequan.jeepay.service.mapper.SysConfigMapper;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Set;
@@ -45,8 +46,6 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
      * **/
     public static boolean IS_USE_CACHE = false;
 
-    @Autowired
-    private SysConfigService sysConfigService;
 
     /** 数据库application配置参数 **/
     private static MutablePair<String, DBApplicationConfig> APPLICATION_CONFIG = new MutablePair<>("applicationConfig", null);
@@ -90,6 +89,7 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
     }
 
 
+    @Transactional
     public int updateByConfigKey(Map<String, String> updateMap) {
         int count = 0;
         Set<String> set = updateMap.keySet();
@@ -97,7 +97,7 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
             SysConfig sysConfig = new SysConfig();
             sysConfig.setConfigKey(k);
             sysConfig.setConfigVal(updateMap.get(k));
-            boolean update = sysConfigService.saveOrUpdate(sysConfig);
+            boolean update = this.saveOrUpdate(sysConfig);
             if (update) {
                 count ++;
             }
@@ -105,3 +105,4 @@ public class SysConfigService extends ServiceImpl<SysConfigMapper, SysConfig> im
         return count;
     }
 }
+

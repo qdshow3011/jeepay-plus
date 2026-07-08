@@ -1,4 +1,4 @@
-package com.jeequan.jeepay.mch.secruity;
+﻿package com.jeequan.jeepay.mch.secruity;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -74,7 +74,9 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .anyRequest().authenticated())
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -88,3 +90,4 @@ public class WebSecurityConfig {
                 "/swagger-resources/**", "/v3/api-docs/**", "/doc.html", "/webjars/**");
     }
 }
+

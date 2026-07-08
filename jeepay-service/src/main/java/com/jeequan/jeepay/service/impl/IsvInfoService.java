@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2021-2031, 河北计全科技有限公司 (https://www.jeequan.com & jeequan@126.com).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
@@ -39,14 +39,13 @@ public class IsvInfoService extends ServiceImpl<IsvInfoMapper, IsvInfo> {
 
     @Autowired private MchInfoService mchInfoService;
 
-    @Autowired private IsvInfoService isvInfoService;
 
     @Autowired private PayInterfaceConfigService payInterfaceConfigService;
 
     @Transactional
     public void removeByIsvNo(String isvNo) {
         // 0.当前服务商是否存在
-        IsvInfo isvInfo = isvInfoService.getById(isvNo);
+        IsvInfo isvInfo = this.getById(isvNo);
         if (isvInfo == null) {
             throw new BizException("该服务商不存在");
         }
@@ -64,9 +63,10 @@ public class IsvInfoService extends ServiceImpl<IsvInfoMapper, IsvInfo> {
         );
 
         // 3.删除该服务商
-        boolean remove = isvInfoService.removeById(isvNo);
+        boolean remove = this.removeById(isvNo);
         if (!remove) {
             throw new BizException("删除服务商失败");
         }
     }
 }
+
