@@ -7,6 +7,7 @@ RUN mvn -B -pl jeepay-manager -am package -DskipTests
 FROM eclipse-temurin:17-jre-jammy
 LABEL maintainer="Jeepay Team"
 ENV LANG=C.UTF-8 TZ=Asia/Shanghai
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError"
 RUN apt-get update && apt-get install -y --no-install-recommends curl fontconfig fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd --system jeepay && useradd --system --gid jeepay --home /jeepayhomes jeepay \
@@ -18,4 +19,4 @@ USER jeepay
 WORKDIR /jeepayhomes/service/app
 EXPOSE 9217
 HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=5 CMD curl --fail --silent http://localhost:9217/actuator/health || exit 1
-ENTRYPOINT ["java", "-jar", "jeepay-manager.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar jeepay-manager.jar"]
