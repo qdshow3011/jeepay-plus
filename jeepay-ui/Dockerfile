@@ -8,10 +8,13 @@ WORKDIR /workspace
 
 COPY . /workspace
 
-RUN npm config set registry ${NPM_REGISTRY} \
-    && cd /workspace/jeepay-ui-${PLATFORM} \
-    && npm install \
-    && npm run build
+RUN npm config set registry ${NPM_REGISTRY}
+
+WORKDIR /workspace/jeepay-ui-${PLATFORM}
+
+RUN --mount=type=cache,target=/root/.npm \
+    --mount=type=cache,target=/workspace/jeepay-ui-${PLATFORM}/node_modules \
+    npm install && npm run build
 
 # 运行阶段
 FROM nginx:alpine

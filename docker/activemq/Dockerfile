@@ -6,9 +6,10 @@ ENV ACTIVEMQ_HOME /opt/activemq
 
 RUN apk add --no-cache curl netcat-openbsd tar gzip && \
     mkdir -p /opt && \
-    (curl -sSL --retry 5 --retry-delay 5 --connect-timeout 30 https://archive.apache.org/dist/activemq/${ACTIVEMQ_VERSION}/${ACTIVEMQ}-bin.tar.gz \
-     || curl -sSL --retry 3 --retry-delay 5 --connect-timeout 30 https://dlcdn.apache.org/activemq/${ACTIVEMQ_VERSION}/${ACTIVEMQ}-bin.tar.gz) \
-     | tar -xvz -C /opt && \
+    (curl -sSL --retry 5 --retry-delay 5 --connect-timeout 30 -o /tmp/activemq.tar.gz https://archive.apache.org/dist/activemq/${ACTIVEMQ_VERSION}/${ACTIVEMQ}-bin.tar.gz \
+     || curl -sSL --retry 3 --retry-delay 5 --connect-timeout 30 -o /tmp/activemq.tar.gz https://dlcdn.apache.org/activemq/${ACTIVEMQ_VERSION}/${ACTIVEMQ}-bin.tar.gz) && \
+    tar -xvz -C /opt -f /tmp/activemq.tar.gz && \
+    rm -f /tmp/activemq.tar.gz && \
     ln -s /opt/${ACTIVEMQ} ${ACTIVEMQ_HOME} && \
     addgroup -S activemq && \
     adduser -S -H -G activemq -h ${ACTIVEMQ_HOME} activemq && \

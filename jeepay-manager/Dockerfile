@@ -1,8 +1,16 @@
 FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /workspace
 COPY .mvn/settings.xml /root/.m2/settings.xml
+COPY pom.xml .
+COPY jeepay-core/pom.xml jeepay-core/
+COPY jeepay-service/pom.xml jeepay-service/
+COPY jeepay-components/pom.xml jeepay-components/
+COPY jeepay-components/jeepay-components-mq/pom.xml jeepay-components/jeepay-components-mq/
+COPY jeepay-components/jeepay-components-oss/pom.xml jeepay-components/jeepay-components-oss/
+COPY jeepay-manager/pom.xml jeepay-manager/
+RUN --mount=type=cache,target=/root/.m2/repository mvn -B -pl jeepay-manager -am dependency:go-offline
 COPY . .
-RUN mvn -B -pl jeepay-manager -am package -DskipTests
+RUN --mount=type=cache,target=/root/.m2/repository mvn -B -pl jeepay-manager -am package -DskipTests
 
 FROM eclipse-temurin:17-jre-jammy
 LABEL maintainer="Jeepay Team"
