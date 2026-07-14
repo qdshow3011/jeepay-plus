@@ -1,4 +1,4 @@
-# Jeepay Full Modernization Implementation Plan
+# OpenHubs Pay Full Modernization Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -16,12 +16,12 @@
 - `docker-compose.yml`：唯一容器部署拓扑，只保留 ActiveMQ。
 - `.env.example`：可提交的环境变量模板；`.env` 仅保存本机值。
 - `pom.xml`：Java 17、Boot 3.5、统一依赖与插件版本。
-- `jeepay-*/pom.xml`：模块依赖迁移，不再覆盖父 POM 中的统一版本。
-- `jeepay-*/src/test/**`：配置、安全和支付状态回归测试。
+- `OpenHubs Pay-*/pom.xml`：模块依赖迁移，不再覆盖父 POM 中的统一版本。
+- `OpenHubs Pay-*/src/test/**`：配置、安全和支付状态回归测试。
 - `SecurityYmlConfig` / `SystemYmlConfig`：JWT 和 CORS 配置入口。
 - `PayOrderCloseService`：手工关单与补单撤销共用的领域服务。
 - `YsfpayIsvsubMchParams`：特约商户云闪付终端号。
-- `jeepay-ui/package.json` 与根 lockfile：三个前端的统一 workspace。
+- `OpenHubs Pay-ui/package.json` 与根 lockfile：三个前端的统一 workspace。
 - `.github/workflows/ci.yml`：Java、前端、配置验证流水线。
 
 ### Task 1: 建立部署配置回归测试
@@ -50,7 +50,7 @@ Assert-True ($compose -notmatch '(?m)^  (rabbitmq|rocketmq-namesrv|rocketmq-brok
 $ips = [regex]::Matches($compose, 'ipv4_address:\s*([^\r\n]+)') | ForEach-Object { $_.Groups[1].Value.Trim() }
 Assert-True (($ips | Group-Object | Where-Object Count -gt 1).Count -eq 0) 'Duplicate static IP found'
 
-@('jeepay-payment/Dockerfile','jeepay-manager/Dockerfile','jeepay-merchant/Dockerfile','jeepay-ui/Dockerfile') |
+@('OpenHubs Pay-payment/Dockerfile','OpenHubs Pay-manager/Dockerfile','OpenHubs Pay-merchant/Dockerfile','OpenHubs Pay-ui/Dockerfile') |
     ForEach-Object { Assert-True (Test-Path (Join-Path $root $_)) "Missing $_" }
 
 Get-ChildItem (Join-Path $root 'conf') -Filter application.yml -Recurse |
@@ -95,22 +95,22 @@ git commit -m "test: add deployment configuration checks"
 payment:
   build:
     context: .
-    dockerfile: jeepay-payment/Dockerfile
+    dockerfile: OpenHubs Pay-payment/Dockerfile
 manager:
   build:
     context: .
-    dockerfile: jeepay-manager/Dockerfile
+    dockerfile: OpenHubs Pay-manager/Dockerfile
 merchant:
   build:
     context: .
-    dockerfile: jeepay-merchant/Dockerfile
+    dockerfile: OpenHubs Pay-merchant/Dockerfile
 ```
 
 三个前端统一使用：
 
 ```yaml
 build:
-  context: ./jeepay-ui
+  context: ./OpenHubs Pay-ui
   dockerfile: Dockerfile
 ```
 
@@ -118,8 +118,8 @@ MySQL 与 ActiveMQ 密码由环境变量传入：
 
 ```yaml
 MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
-MYSQL_USER: ${MYSQL_USER:-jeepay}
+MYSQL_DATABASE: ${MYSQL_DATABASE:-OpenHubs Paydb}
+MYSQL_USER: ${MYSQL_USER:-OpenHubs Pay}
 MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 ```
 
@@ -129,14 +129,14 @@ MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
 ```dotenv
 MYSQL_ROOT_PASSWORD=change-me-root
-MYSQL_DATABASE=jeepaydb
-MYSQL_USER=jeepay
+MYSQL_DATABASE=OpenHubs Paydb
+MYSQL_USER=OpenHubs Pay
 MYSQL_PASSWORD=change-me-app
 ACTIVEMQ_USER=system
 ACTIVEMQ_PASSWORD=change-me-mq
 MANAGER_JWT_SECRET=replace-with-at-least-32-random-bytes
 MERCHANT_JWT_SECRET=replace-with-at-least-32-random-bytes
-JEEPAY_CORS_ALLOWED_ORIGINS=http://localhost:9226,http://localhost:9227,http://localhost:9228
+OPENHUBS_PAY_CORS_ALLOWED_ORIGINS=http://localhost:9226,http://localhost:9227,http://localhost:9228
 ```
 
 在 `.gitignore` 加入：
@@ -153,8 +153,8 @@ JEEPAY_CORS_ALLOWED_ORIGINS=http://localhost:9226,http://localhost:9227,http://l
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/${MYSQL_DATABASE:jeepaydb}?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${MYSQL_USER:jeepay}
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/${MYSQL_DATABASE:OpenHubs Paydb}?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:OpenHubs Pay}
     password: ${MYSQL_PASSWORD}
   redis:
     host: ${REDIS_HOST:redis}
@@ -181,13 +181,13 @@ git commit -m "fix: make ActiveMQ compose deployment self contained"
 ### Task 3: 将前端正式纳入主仓库
 
 **Files:**
-- Remove: `jeepay-ui/.git/`
-- Add: `jeepay-ui/**`
-- Modify: `jeepay-ui/.gitignore`
+- Remove: `OpenHubs Pay-ui/.git/`
+- Add: `OpenHubs Pay-ui/**`
+- Modify: `OpenHubs Pay-ui/.gitignore`
 
 - [ ] **Step 1: 记录嵌套仓库当前提交并确认工作区干净**
 
-Run: `git -C jeepay-ui rev-parse HEAD; git -C jeepay-ui status --short`
+Run: `git -C OpenHubs Pay-ui rev-parse HEAD; git -C OpenHubs Pay-ui status --short`
 
 Expected: 输出提交 `11c8933...`，状态无未提交文件；如不为空则先停止并保护用户改动。
 
@@ -196,22 +196,22 @@ Expected: 输出提交 `11c8933...`，状态无未提交文件；如不为空则
 在 PowerShell 中先验证目标路径：
 
 ```powershell
-$target = (Resolve-Path 'jeepay-ui/.git').Path
+$target = (Resolve-Path 'OpenHubs Pay-ui/.git').Path
 $root = (Resolve-Path '.').Path
-if (-not $target.StartsWith((Join-Path $root 'jeepay-ui'))) { throw 'Unsafe nested git path' }
+if (-not $target.StartsWith((Join-Path $root 'OpenHubs Pay-ui'))) { throw 'Unsafe nested git path' }
 Remove-Item -LiteralPath $target -Recurse -Force
 ```
 
 - [ ] **Step 3: 验证前端成为主仓库普通文件**
 
-Run: `git status --short -- jeepay-ui | Select-Object -First 20`
+Run: `git status --short -- OpenHubs Pay-ui | Select-Object -First 20`
 
 Expected: 前端文件显示为主仓库新增文件，且不包含 `node_modules`、`dist`。
 
 - [ ] **Step 4: 提交前端源码**
 
 ```powershell
-git add jeepay-ui
+git add OpenHubs Pay-ui
 git commit -m "chore: integrate frontend into monorepo"
 ```
 
@@ -219,13 +219,13 @@ git commit -m "chore: integrate frontend into monorepo"
 
 **Files:**
 - Modify: `pom.xml`
-- Modify: `jeepay-core/pom.xml`
-- Modify: `jeepay-service/pom.xml`
-- Modify: `jeepay-components/jeepay-components-mq/pom.xml`
-- Modify: `jeepay-components/jeepay-components-oss/pom.xml`
-- Modify: `jeepay-manager/pom.xml`
-- Modify: `jeepay-merchant/pom.xml`
-- Modify: `jeepay-payment/pom.xml`
+- Modify: `OpenHubs Pay-core/pom.xml`
+- Modify: `OpenHubs Pay-service/pom.xml`
+- Modify: `OpenHubs Pay-components/OpenHubs Pay-components-mq/pom.xml`
+- Modify: `OpenHubs Pay-components/OpenHubs Pay-components-oss/pom.xml`
+- Modify: `OpenHubs Pay-manager/pom.xml`
+- Modify: `OpenHubs Pay-merchant/pom.xml`
+- Modify: `OpenHubs Pay-payment/pom.xml`
 - Create: `.mvn/wrapper/maven-wrapper.properties`
 - Create: `mvnw`
 - Create: `mvnw.cmd`
@@ -254,7 +254,7 @@ Expected: 当前环境或旧依赖在 Java 17/Boot 3 迁移前失败，保存首
 </properties>
 ```
 
-父 POM 使用 MyBatis-Plus Boot 3 starter，并统一 Jeepay SDK 版本；Payment 删除 `pls-1.3.0` 覆盖。
+父 POM 使用 MyBatis-Plus Boot 3 starter，并统一 OpenHubs Pay SDK 版本；Payment 删除 `pls-1.3.0` 覆盖。
 
 - [ ] **Step 3: 更新 JJWT 模块依赖**
 
@@ -279,7 +279,7 @@ Expected: 依赖解析成功；编译仅剩 Jakarta、Security API 或第三方 
 - [ ] **Step 5: 提交构建基线**
 
 ```powershell
-git add pom.xml */pom.xml jeepay-components/*/pom.xml .mvn mvnw mvnw.cmd
+git add pom.xml */pom.xml OpenHubs Pay-components/*/pom.xml .mvn mvnw mvnw.cmd
 git commit -m "build: migrate baseline to Java 17 and Spring Boot 3"
 ```
 
@@ -288,14 +288,14 @@ git commit -m "build: migrate baseline to Java 17 and Spring Boot 3"
 **Files:**
 - Modify: all Java files importing `javax.servlet.*`, `javax.validation.*`, `javax.annotation.*`
 - Modify: Spring Boot 3 不兼容的配置类
-- Test: `jeepay-core/src/test/java/**`
+- Test: `OpenHubs Pay-core/src/test/java/**`
 
 - [ ] **Step 1: 添加 Jakarta 编译守卫测试**
 
 创建 PowerShell 检查，禁止受影响的旧命名空间：
 
 ```powershell
-$hits = rg -n 'import javax\.(servlet|validation|annotation)' jeepay-core jeepay-service jeepay-components jeepay-manager jeepay-merchant jeepay-payment
+$hits = rg -n 'import javax\.(servlet|validation|annotation)' OpenHubs Pay-core OpenHubs Pay-service OpenHubs Pay-components OpenHubs Pay-manager OpenHubs Pay-merchant OpenHubs Pay-payment
 if ($LASTEXITCODE -eq 0) { throw "Legacy javax imports remain:`n$hits" }
 ```
 
@@ -326,20 +326,20 @@ Expected: Jakarta 相关错误清零。
 - [ ] **Step 5: 提交 Jakarta 迁移**
 
 ```powershell
-git add jeepay-core jeepay-service jeepay-components jeepay-manager jeepay-merchant jeepay-payment
+git add OpenHubs Pay-core OpenHubs Pay-service OpenHubs Pay-components OpenHubs Pay-manager OpenHubs Pay-merchant OpenHubs Pay-payment
 git commit -m "refactor: migrate application APIs to Jakarta"
 ```
 
 ### Task 6: 迁移 Spring Security、JWT 与 CORS
 
 **Files:**
-- Modify: `jeepay-manager/src/main/java/com/jeequan/jeepay/mgr/secruity/WebSecurityConfig.java`
-- Modify: `jeepay-merchant/src/main/java/com/jeequan/jeepay/mch/secruity/WebSecurityConfig.java`
+- Modify: `OpenHubs Pay-manager/src/main/java/com/jeequan/OpenHubs Pay/mgr/secruity/WebSecurityConfig.java`
+- Modify: `OpenHubs Pay-merchant/src/main/java/com/jeequan/OpenHubs Pay/mch/secruity/WebSecurityConfig.java`
 - Modify: both `JeeAuthenticationTokenFilter.java`
-- Modify: `jeepay-core/src/main/java/com/jeequan/jeepay/core/jwt/JWTUtils.java`
+- Modify: `OpenHubs Pay-core/src/main/java/com/jeequan/OpenHubs Pay/core/jwt/JWTUtils.java`
 - Modify: manager/merchant `SystemYmlConfig.java`
 - Test: manager/merchant security tests
-- Test: `jeepay-core/src/test/java/com/jeequan/jeepay/core/jwt/JWTUtilsTest.java`
+- Test: `OpenHubs Pay-core/src/test/java/com/jeequan/OpenHubs Pay/core/jwt/JWTUtilsTest.java`
 
 - [ ] **Step 1: 写 JWT 弱密钥失败测试**
 
@@ -393,18 +393,18 @@ SecurityFilterChain securityFilterChain(HttpSecurity http,
 
 - [ ] **Step 5: 从配置生成 CORS 白名单**
 
-解析 `${JEEPAY_CORS_ALLOWED_ORIGINS:http://localhost:9226,http://localhost:9227,http://localhost:9228}`，调用 `setAllowedOrigins`，保留 credentials，不使用通配符。
+解析 `${OPENHUBS_PAY_CORS_ALLOWED_ORIGINS:http://localhost:9226,http://localhost:9227,http://localhost:9228}`，调用 `setAllowedOrigins`，保留 credentials，不使用通配符。
 
 - [ ] **Step 6: 运行安全测试**
 
-Run: `./mvnw.cmd -pl jeepay-core,jeepay-manager,jeepay-merchant -am test`
+Run: `./mvnw.cmd -pl OpenHubs Pay-core,OpenHubs Pay-manager,OpenHubs Pay-merchant -am test`
 
 Expected: JWT 与 CORS 测试全部 PASS。
 
 - [ ] **Step 7: 提交安全迁移**
 
 ```powershell
-git add jeepay-core jeepay-manager jeepay-merchant conf
+git add OpenHubs Pay-core OpenHubs Pay-manager OpenHubs Pay-merchant conf
 git commit -m "security: migrate JWT CORS and filter chain"
 ```
 
@@ -412,16 +412,16 @@ git commit -m "security: migrate JWT CORS and filter chain"
 
 **Files:**
 - Modify: Java files containing `printStackTrace()`
-- Modify: `jeepay-core/src/main/java/com/jeequan/jeepay/core/utils/JeepayKit.java`
+- Modify: `OpenHubs Pay-core/src/main/java/com/jeequan/OpenHubs Pay/core/utils/OpenHubsPayKit.java`
 - Modify: channel MD5 implementations
 - Test: `scripts/verify-security.ps1`
 
 - [ ] **Step 1: 写安全静态测试并确认失败**
 
 ```powershell
-$prints = rg -n 'printStackTrace\(' jeepay-core jeepay-service jeepay-components jeepay-manager jeepay-merchant jeepay-payment
+$prints = rg -n 'printStackTrace\(' OpenHubs Pay-core OpenHubs Pay-service OpenHubs Pay-components OpenHubs Pay-manager OpenHubs Pay-merchant OpenHubs Pay-payment
 if ($LASTEXITCODE -eq 0) { throw "printStackTrace remains:`n$prints" }
-$weakLogs = rg -n 'log\.error\(e\.getMessage\(\)\)' jeepay-*
+$weakLogs = rg -n 'log\.error\(e\.getMessage\(\)\)' OpenHubs Pay-*
 if ($LASTEXITCODE -eq 0) { throw "Stack trace is discarded:`n$weakLogs" }
 ```
 
@@ -431,7 +431,7 @@ if ($LASTEXITCODE -eq 0) { throw "Stack trace is discarded:`n$weakLogs" }
 
 - [ ] **Step 3: 收紧 MD5 API**
 
-删除通用 `JeepayKit.md5` 的内部调用；渠道协议所需实现移动或保留在对应 channel 包，并命名为 `channelProtocolMd5Sign`，附注上游协议约束。密码与内部签名不得引用该方法。
+删除通用 `OpenHubsPayKit.md5` 的内部调用；渠道协议所需实现移动或保留在对应 channel 包，并命名为 `channelProtocolMd5Sign`，附注上游协议约束。密码与内部签名不得引用该方法。
 
 - [ ] **Step 4: 运行静态测试和相关单元测试**
 
@@ -442,18 +442,18 @@ Expected: PASS。
 - [ ] **Step 5: 提交日志和算法边界修复**
 
 ```powershell
-git add scripts/verify-security.ps1 jeepay-core jeepay-payment
+git add scripts/verify-security.ps1 OpenHubs Pay-core OpenHubs Pay-payment
 git commit -m "security: harden exception logging and MD5 boundaries"
 ```
 
 ### Task 8: 抽取共用关单服务并补齐自动撤销
 
 **Files:**
-- Create: `jeepay-payment/src/main/java/com/jeequan/jeepay/pay/service/PayOrderCloseService.java`
-- Modify: `jeepay-payment/src/main/java/com/jeequan/jeepay/pay/ctrl/payorder/CloseOrderController.java`
-- Modify: `jeepay-payment/src/main/java/com/jeequan/jeepay/pay/mq/PayOrderReissueMQReceiver.java`
-- Test: `jeepay-payment/src/test/java/com/jeequan/jeepay/pay/service/PayOrderCloseServiceTest.java`
-- Test: `jeepay-payment/src/test/java/com/jeequan/jeepay/pay/mq/PayOrderReissueMQReceiverTest.java`
+- Create: `OpenHubs Pay-payment/src/main/java/com/jeequan/OpenHubs Pay/pay/service/PayOrderCloseService.java`
+- Modify: `OpenHubs Pay-payment/src/main/java/com/jeequan/OpenHubs Pay/pay/ctrl/payorder/CloseOrderController.java`
+- Modify: `OpenHubs Pay-payment/src/main/java/com/jeequan/OpenHubs Pay/pay/mq/PayOrderReissueMQReceiver.java`
+- Test: `OpenHubs Pay-payment/src/test/java/com/jeequan/OpenHubs Pay/pay/service/PayOrderCloseServiceTest.java`
+- Test: `OpenHubs Pay-payment/src/test/java/com/jeequan/OpenHubs Pay/pay/mq/PayOrderReissueMQReceiverTest.java`
 
 - [ ] **Step 1: 写“明确关闭成功才更新本地状态”测试**
 
@@ -517,24 +517,24 @@ void attemptsCloseAfterLastWaitingQuery() {
 
 - [ ] **Step 6: 运行支付模块测试**
 
-Run: `./mvnw.cmd -pl jeepay-payment -am test`
+Run: `./mvnw.cmd -pl OpenHubs Pay-payment -am test`
 
 Expected: 关单与补单测试 PASS。
 
 - [ ] **Step 7: 提交业务完整性修复**
 
 ```powershell
-git add jeepay-payment
+git add OpenHubs Pay-payment
 git commit -m "fix: close unresolved pay orders safely"
 ```
 
 ### Task 9: 将云闪付终端号迁移到特约商户配置
 
 **Files:**
-- Modify: `jeepay-core/src/main/java/com/jeequan/jeepay/core/model/params/ysf/YsfpayIsvsubMchParams.java`
-- Modify: `jeepay-payment/src/main/java/com/jeequan/jeepay/pay/channel/ysfpay/YsfpayPaymentService.java`
+- Modify: `OpenHubs Pay-core/src/main/java/com/jeequan/OpenHubs Pay/core/model/params/ysf/YsfpayIsvsubMchParams.java`
+- Modify: `OpenHubs Pay-payment/src/main/java/com/jeequan/OpenHubs Pay/pay/channel/ysfpay/YsfpayPaymentService.java`
 - Modify: manager/merchant payment interface configuration UI files
-- Test: `jeepay-payment/src/test/java/com/jeequan/jeepay/pay/channel/ysfpay/YsfpayPaymentServiceTest.java`
+- Test: `OpenHubs Pay-payment/src/test/java/com/jeequan/OpenHubs Pay/pay/channel/ysfpay/YsfpayPaymentServiceTest.java`
 
 - [ ] **Step 1: 写缺失 termId 时失败的测试**
 
@@ -574,24 +574,24 @@ reqParams.put("termId", params.getTermId().trim());
 
 - [ ] **Step 5: 运行后端测试和两个前端构建**
 
-Run: `./mvnw.cmd -pl jeepay-payment -am test`
+Run: `./mvnw.cmd -pl OpenHubs Pay-payment -am test`
 
-Run: `npm --prefix jeepay-ui run build:manager; npm --prefix jeepay-ui run build:merchant`
+Run: `npm --prefix OpenHubs Pay-ui run build:manager; npm --prefix OpenHubs Pay-ui run build:merchant`
 
 Expected: 全部 PASS。
 
 - [ ] **Step 6: 提交终端号配置修复**
 
 ```powershell
-git add jeepay-core jeepay-payment jeepay-ui
+git add OpenHubs Pay-core OpenHubs Pay-payment OpenHubs Pay-ui
 git commit -m "fix: configure YSF terminal per sub merchant"
 ```
 
 ### Task 10: 补充回调与 MQ 幂等测试
 
 **Files:**
-- Test: `jeepay-payment/src/test/java/com/jeequan/jeepay/pay/ctrl/payorder/ChannelNoticeControllerTest.java`
-- Test: `jeepay-payment/src/test/java/com/jeequan/jeepay/pay/mq/PayOrderMchNotifyMQReceiverTest.java`
+- Test: `OpenHubs Pay-payment/src/test/java/com/jeequan/OpenHubs Pay/pay/ctrl/payorder/ChannelNoticeControllerTest.java`
+- Test: `OpenHubs Pay-payment/src/test/java/com/jeequan/OpenHubs Pay/pay/mq/PayOrderMchNotifyMQReceiverTest.java`
 - Modify: relevant process/service classes only if tests reveal duplicate side effects
 
 - [ ] **Step 1: 写重复成功通知测试**
@@ -600,7 +600,7 @@ git commit -m "fix: configure YSF terminal per sub merchant"
 
 - [ ] **Step 2: 运行测试并确认当前行为**
 
-Run: `./mvnw.cmd -pl jeepay-payment -Dtest=ChannelNoticeControllerTest test`
+Run: `./mvnw.cmd -pl OpenHubs Pay-payment -Dtest=ChannelNoticeControllerTest test`
 
 Expected: 若存在重复后置业务则 FAIL；若现有条件更新已保护则 PASS 并作为回归测试保留。
 
@@ -614,26 +614,26 @@ Expected: 若存在重复后置业务则 FAIL；若现有条件更新已保护�
 
 - [ ] **Step 5: 运行支付模块全量测试并提交**
 
-Run: `./mvnw.cmd -pl jeepay-payment -am test`
+Run: `./mvnw.cmd -pl OpenHubs Pay-payment -am test`
 
 ```powershell
-git add jeepay-payment
+git add OpenHubs Pay-payment
 git commit -m "test: protect payment callbacks and MQ idempotency"
 ```
 
 ### Task 11: 统一前端 workspace 与生产构建
 
 **Files:**
-- Modify: `jeepay-ui/package.json`
-- Create: `jeepay-ui/package-lock.json`
+- Modify: `OpenHubs Pay-ui/package.json`
+- Create: `OpenHubs Pay-ui/package-lock.json`
 - Remove: child `package-lock.json` files after root lockfile is generated
 - Modify: child `package.json` files as required by clean install/build
 
 - [ ] **Step 1: 清理依赖目录并执行根 workspace 干净安装**
 
-在确认路径位于 `jeepay-ui` 后删除三个子项目 `node_modules`，然后运行：
+在确认路径位于 `OpenHubs Pay-ui` 后删除三个子项目 `node_modules`，然后运行：
 
-`npm --prefix jeepay-ui install --package-lock-only`
+`npm --prefix OpenHubs Pay-ui install --package-lock-only`
 
 Expected: 生成唯一根 lockfile。
 
@@ -651,9 +651,9 @@ Expected: 生成唯一根 lockfile。
 
 - [ ] **Step 3: 安装并构建三个前端**
 
-Run: `npm --prefix jeepay-ui ci`
+Run: `npm --prefix OpenHubs Pay-ui ci`
 
-Run: `npm --prefix jeepay-ui run build`
+Run: `npm --prefix OpenHubs Pay-ui run build`
 
 Expected: 三个 Vite production build 均成功。
 
@@ -664,7 +664,7 @@ Expected: 三个 Vite production build 均成功。
 - [ ] **Step 5: 提交前端构建治理**
 
 ```powershell
-git add jeepay-ui
+git add OpenHubs Pay-ui
 git commit -m "build: unify frontend workspace and lockfile"
 ```
 
@@ -673,7 +673,7 @@ git commit -m "build: unify frontend workspace and lockfile"
 **Files:**
 - Create: `.github/workflows/ci.yml`
 - Modify: `README.md`
-- Modify: `jeepay-ui/README.md`
+- Modify: `OpenHubs Pay-ui/README.md`
 
 - [ ] **Step 1: 创建 CI 流水线**
 
@@ -684,9 +684,9 @@ CI 使用 Java 17、Node 20，依次执行：
 - run: powershell -ExecutionPolicy Bypass -File scripts/verify-security.ps1
 - run: ./mvnw -B test
 - run: npm ci
-  working-directory: jeepay-ui
+  working-directory: OpenHubs Pay-ui
 - run: npm run build
-  working-directory: jeepay-ui
+  working-directory: OpenHubs Pay-ui
 - run: docker compose --env-file .env.example config --quiet
 ```
 
@@ -702,7 +702,7 @@ Expected: 所有模块 BUILD SUCCESS。
 
 - [ ] **Step 4: 运行前端全量验证**
 
-Run: `npm --prefix jeepay-ui ci; npm --prefix jeepay-ui run build`
+Run: `npm --prefix OpenHubs Pay-ui ci; npm --prefix OpenHubs Pay-ui run build`
 
 Expected: 三个前端构建成功。
 
@@ -720,8 +720,8 @@ Expected: 三项均成功，无输出错误。
 
 ```powershell
 git status --short
-rg -n 'jwt-secret:\s*[^$]|jeepaydb123456|BEGIN (RSA |EC )?PRIVATE KEY' --glob '!docs/superpowers/**' .
-Get-ChildItem jeepay-ui -Force -Directory -Filter .git -Recurse
+rg -n 'jwt-secret:\s*[^$]|OpenHubs Paydb123456|BEGIN (RSA |EC )?PRIVATE KEY' --glob '!docs/superpowers/**' .
+Get-ChildItem OpenHubs Pay-ui -Force -Directory -Filter .git -Recurse
 ```
 
 Expected: 只有计划内变更；敏感信息和嵌套 `.git` 均无命中。
@@ -729,7 +729,7 @@ Expected: 只有计划内变更；敏感信息和嵌套 `.git` 均无命中。
 - [ ] **Step 7: 提交 CI 与文档**
 
 ```powershell
-git add .github README.md jeepay-ui/README.md
+git add .github README.md OpenHubs Pay-ui/README.md
 git commit -m "ci: verify modernized backend frontend and deployment"
 ```
 

@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$scopes = @('jeepay-core','jeepay-service','jeepay-components','jeepay-manager','jeepay-merchant','jeepay-payment') |
+$scopes = @('openhubs-pay-core','openhubs-pay-service','openhubs-pay-components','openhubs-pay-manager','openhubs-pay-merchant','openhubs-pay-payment') |
     ForEach-Object { Join-Path $root $_ }
 
 $prints = & rg -n 'printStackTrace\(' @scopes

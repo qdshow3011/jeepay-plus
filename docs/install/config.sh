@@ -3,7 +3,7 @@
 ## 配置文件   .Power by terrfly
 
 # 【项目根目录的地址】 该地址下会包含： nginx/mysql/mq/redis等文件
-rootDir="/jeepayhomes"
+rootDir="/openhubs-payhomes"
 
 # 【mysql密码】必须由部署环境提供，禁止在仓库中保存默认密码
 : "${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD must be set}"

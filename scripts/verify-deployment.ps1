@@ -18,10 +18,10 @@ $ips = [regex]::Matches($compose, '(?m)^\s+ipv4_address:\s*([^\r\n]+)') |
 Assert-True (($ips | Group-Object | Where-Object Count -gt 1).Count -eq 0) 'Duplicate static IP found'
 
 @(
-    'jeepay-payment/Dockerfile',
-    'jeepay-manager/Dockerfile',
-    'jeepay-merchant/Dockerfile',
-    'jeepay-ui/Dockerfile'
+    'openhubs-pay-payment/Dockerfile',
+    'openhubs-pay-manager/Dockerfile',
+    'openhubs-pay-merchant/Dockerfile',
+    'openhubs-pay-ui/Dockerfile'
 ) | ForEach-Object {
     Assert-True (Test-Path (Join-Path $root $_)) "Missing $_"
 }
@@ -35,7 +35,7 @@ Get-ChildItem (Join-Path $root 'conf') -Filter application.yml -Recurse |
     }
 
 Assert-True ($compose -notmatch 'nginx\.tar\.gz') 'Compose references missing nginx.tar.gz'
-@('jeepay-payment', 'jeepay-manager', 'jeepay-merchant') | ForEach-Object {
+@('openhubs-pay-payment', 'openhubs-pay-manager', 'openhubs-pay-merchant') | ForEach-Object {
     Assert-True ($compose -match "dockerfile:\s+$_/Dockerfile") "Compose does not reference $_/Dockerfile"
 }
 

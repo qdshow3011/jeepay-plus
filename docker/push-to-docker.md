@@ -10,21 +10,21 @@ export DOCKER_IMAGE_TAG=v1.14.0-alpha
 export DOCKER_REGISTRY_USERNAME=username1
 export DOCKER_REGISTRY_PASSWORD=password1
 
-cd jeepay-payment
+cd OpenHubs Pay-payment
 mvn jib:build \
-    -Djib.to.image=$DOCKER_REGISTRY/$DOCKER_NAMESPACE/jeepay-payment:$DOCKER_IMAGE_TAG \
+    -Djib.to.image=$DOCKER_REGISTRY/$DOCKER_NAMESPACE/OpenHubs Pay-payment:$DOCKER_IMAGE_TAG \
     -Djib.to.auth.username=$DOCKER_REGISTRY_USERNAME \
     -Djib.to.auth.password=$DOCKER_REGISTRY_PASSWORD
     
-cd ../jeepay-merchant
+cd ../OpenHubs Pay-merchant
 mvn jib:build \
-    -Djib.to.image=$DOCKER_REGISTRY/$DOCKER_NAMESPACE/jeepay-merchant:$DOCKER_IMAGE_TAG \
+    -Djib.to.image=$DOCKER_REGISTRY/$DOCKER_NAMESPACE/OpenHubs Pay-merchant:$DOCKER_IMAGE_TAG \
     -Djib.to.auth.username=$DOCKER_REGISTRY_USERNAME \
     -Djib.to.auth.password=$DOCKER_REGISTRY_PASSWORD
  
-cd ../jeepay-manager
+cd ../OpenHubs Pay-manager
 mvn jib:build \
-    -Djib.to.image=$DOCKER_REGISTRY/$DOCKER_NAMESPACE/jeepay-manager:$DOCKER_IMAGE_TAG \
+    -Djib.to.image=$DOCKER_REGISTRY/$DOCKER_NAMESPACE/OpenHubs Pay-manager:$DOCKER_IMAGE_TAG \
     -Djib.to.auth.username=$DOCKER_REGISTRY_USERNAME \
     -Djib.to.auth.password=$DOCKER_REGISTRY_PASSWORD
 ```

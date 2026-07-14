@@ -3,14 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion> <!-- POM模型版本 -->
 
-  <groupId>com.jeequan</groupId> <!-- 组织名, 类似于包名 -->
-  <artifactId>jeepay</artifactId>  <!-- 项目名称  -->
+  <groupId>com.openhubs</groupId> <!-- 组织名, 类似于包名 -->
+  <artifactId>OpenHubs Pay</artifactId>  <!-- 项目名称  -->
   <packaging>pom</packaging> <!-- 项目的最终打包类型/发布形式, 可选[jar, war, pom, maven-plugin]等 -->
 
-  <name>jeepay</name>
+  <name>OpenHubs Pay</name>
   <version>Final</version> <!-- pom版本号/项目总版本号， 每个子项目引入的版本号必须一致。  最外层的pom.xml版本号保持不变，始终为Final版本。 更新版本请更改isys.version属性  -->
-  <description>Jeepay计全支付系统</description> <!-- 项目描述 -->
-  <url>https://www.jeequan.com</url>
+  <description>OpenHubs Pay计全支付系统</description> <!-- 项目描述 -->
+  <url>https://www.openhubs.com</url>
 
   <!-- 继承：Spring Boot Parent -->
   <parent>
@@ -21,16 +21,16 @@
 
   <!-- 声明子项目 -->
   <modules>
-    <module>jeepay-z-codegen</module>    <!-- 代码生成器 -->
+    <module>OpenHubs Pay-z-codegen</module>    <!-- 代码生成器 -->
 
-    <module>jeepay-core</module>  <!-- 基础函数, 包含工具类等 -->
-    <module>jeepay-service</module>  <!-- db service等 -->
+    <module>OpenHubs Pay-core</module>  <!-- 基础函数, 包含工具类等 -->
+    <module>OpenHubs Pay-service</module>  <!-- db service等 -->
 
-  	<module>jeepay-manager</module>	<!-- 运营平台管理端 -->
-  	<module>jeepay-merchant</module>	<!-- 商户平台管理端 -->
-    <module>jeepay-payment</module>	<!-- 支付统一网关 -->
+  	<module>OpenHubs Pay-manager</module>	<!-- 运营平台管理端 -->
+  	<module>OpenHubs Pay-merchant</module>	<!-- 商户平台管理端 -->
+    <module>OpenHubs Pay-payment</module>	<!-- 支付统一网关 -->
 
-    <module>jeepay-components</module> <!-- 组件包 -->
+    <module>OpenHubs Pay-components</module> <!-- 组件包 -->
   </modules>
 
   <!-- 配置属性声明, 支持自定义参数 -->
@@ -43,7 +43,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- 项目构建输出编码 -->
 
     <!-- 其他工具包 -->
-    <jeepay.sdk.java.version>pls-1.3.0</jeepay.sdk.java.version>
+    <OpenHubs Pay.sdk.java.version>pls-1.3.0</OpenHubs Pay.sdk.java.version>
     <fastjson.version>1.2.83</fastjson.version> <!-- fastjson -->
     <mybatis.plus.starter.version>3.5.16</mybatis.plus.starter.version>  <!-- mybatis plus Boot 3 -->
     <hutool.util.version>5.8.26</hutool.util.version>  <!-- hutool -->
@@ -60,37 +60,37 @@
 
         <!-- 依赖 [ core ]包。  -->
         <dependency>
-            <groupId>com.jeequan</groupId>
-            <artifactId>jeepay-core</artifactId>
+            <groupId>com.openhubs</groupId>
+            <artifactId>OpenHubs Pay-core</artifactId>
             <version>${isys.version}</version>
         </dependency>
 
         <!-- [ service ]包, 会自动传递依赖[ core ]包。  -->
         <dependency>
-            <groupId>com.jeequan</groupId>
-            <artifactId>jeepay-service</artifactId>
+            <groupId>com.openhubs</groupId>
+            <artifactId>OpenHubs Pay-service</artifactId>
             <version>${isys.version}</version>
         </dependency>
 
         <!-- [ oss ]包  -->
         <dependency>
-            <groupId>com.jeequan</groupId>
-            <artifactId>jeepay-components-oss</artifactId>
+            <groupId>com.openhubs</groupId>
+            <artifactId>OpenHubs Pay-components-oss</artifactId>
             <version>${isys.version}</version>
         </dependency>
 
         <!-- [ mq ]包  -->
         <dependency>
-            <groupId>com.jeequan</groupId>
-            <artifactId>jeepay-components-mq</artifactId>
+            <groupId>com.openhubs</groupId>
+            <artifactId>OpenHubs Pay-components-mq</artifactId>
             <version>${isys.version}</version>
         </dependency>
 
-        <!-- jeepay sdk 支付工具包 -->
+        <!-- OpenHubs Pay sdk 支付工具包 -->
         <dependency>
-            <groupId>com.jeequan</groupId>
-            <artifactId>jeepay-sdk-java</artifactId>
-            <version>${jeepay.sdk.java.version}</version>
+            <groupId>com.openhubs</groupId>
+            <artifactId>OpenHubs Pay-sdk-java</artifactId>
+            <version>${OpenHubs Pay.sdk.java.version}</version>
         </dependency>
 
         <!-- alibaba FastJSON -->

@@ -30,8 +30,8 @@ spring:
       number_format: '#' #数字格式进行原样显示，不加格式化字符例如  100,00
   datasource:
     # yml填写url连接串， 无需将&符号进行转义
-    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/${MYSQL_DATABASE:jeepaydb}?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${MYSQL_USER:jeepay}
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/${MYSQL_DATABASE:OpenHubs Paydb}?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:OpenHubs Pay}
     password: ${MYSQL_PASSWORD}
     druid:
       # 连接池配置项
@@ -65,7 +65,7 @@ spring:
 # #activeMQ配置 ( 注意： activeMQ配置项需在spring的下级 )
   activemq:
     broker-url: failover:(tcp://${ACTIVEMQ_HOST:activemq}:61616?wireFormat.maxInactivityDuration=0)  #连接地址
-    in-memory: false # Jeepay项目不可使用内存模式， 需要连接多个消费者。
+    in-memory: false # OpenHubs Pay项目不可使用内存模式， 需要连接多个消费者。
     user: ${ACTIVEMQ_USER:system} # ActiveMQ认证账号由环境变量注入。
     password: ${ACTIVEMQ_PASSWORD}
     pool:
@@ -78,8 +78,8 @@ spring:
 logging:
   level:
     root: info   #主日志级别
-    com.jeequan.jeepay: debug   #该项目日志级别，当需要打印sql时请开启为debug
-  path: /jeepayhomes/service/logs  #日志存放地址
+    com.openhubs.pay: debug   #该项目日志级别，当需要打印sql时请开启为debug
+  path: /OpenHubs Payhomes/service/logs  #日志存放地址
 
 # knife4j APIDOC文档
 knife4j:
@@ -89,7 +89,7 @@ knife4j:
 isys:
 
   jwt-secret: ${MANAGER_JWT_SECRET} # 生产环境必须提供至少32字节的随机密钥。
-  cors-allowed-origins: ${JEEPAY_CORS_ALLOWED_ORIGINS:http://localhost:9227}
+  cors-allowed-origins: ${OPENHUBS_PAY_CORS_ALLOWED_ORIGINS:http://localhost:9227}
 
   #是否允许跨域请求 [生产环境建议关闭， 若api与前端项目没有在同一个域名下时，应开启此配置或在nginx统一配置允许跨域]
   allow-cors: true
@@ -98,12 +98,12 @@ isys:
   cache-config: false
 
   oss:
-    file-root-path: /jeepayhomes/service/uploads #存储根路径 ( 无需以‘/’结尾 )
+    file-root-path: /OpenHubs Payhomes/service/uploads #存储根路径 ( 无需以‘/’结尾 )
     file-public-path: ${isys.oss.file-root-path}/public #公共读取块  ( 一般配合root-path参数进行设置，需以‘/’ 开头, 无需以‘/’结尾 )
     file-private-path: ${isys.oss.file-root-path}/private #私有化本地访问，不允许url方式公共读取 ( 一般配合root-path参数进行设置，需以‘/’ 开头, 无需以‘/’结尾  )
 
     # [local]: 本地存储，所有的文件将存在放本地，可通过nfs, rsync工具实现多机共享；
-    # [aliyun-oss]: 将文件统一上传到阿里云oss服务器;  注意：需调整jeepay-components-oss/pom.xml中的aliyun-sdk-oss组件依赖方式
+    # [aliyun-oss]: 将文件统一上传到阿里云oss服务器;  注意：需调整OpenHubs Pay-components-oss/pom.xml中的aliyun-sdk-oss组件依赖方式
     service-type: local
 
     # 阿里云OSS服务配置信息

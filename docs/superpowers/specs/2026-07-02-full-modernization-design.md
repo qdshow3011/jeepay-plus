@@ -1,4 +1,4 @@
-# Jeepay 全面现代化与完整性修复设计
+# OpenHubs Pay 全面现代化与完整性修复设计
 
 ## 目标
 
@@ -28,7 +28,7 @@ Docker Compose 只包含以下基础服务和应用：
 - Payment、Manager、Merchant 三个后端。
 - Cashier、Manager、Merchant 三个独立前端容器。
 
-删除 RabbitMQ、RocketMQ 及其卷配置。后端使用各模块自己的 Dockerfile。前端构建上下文固定为仓库内 `./jeepay-ui`。删除当前依赖缺失 `nginx.tar.gz` 的总 Nginx 服务；三个前端容器继续通过各自 Nginx 提供服务。
+删除 RabbitMQ、RocketMQ 及其卷配置。后端使用各模块自己的 Dockerfile。前端构建上下文固定为仓库内 `./OpenHubs Pay-ui`。删除当前依赖缺失 `nginx.tar.gz` 的总 Nginx 服务；三个前端容器继续通过各自 Nginx 提供服务。
 
 ## 配置与密钥
 
@@ -36,7 +36,7 @@ Docker Compose 只包含以下基础服务和应用：
 - 数据库密码、ActiveMQ 密码、JWT 密钥与其他敏感配置通过环境变量注入。
 - 仓库提交 `.env.example`，真实 `.env` 加入 `.gitignore`。
 - JWT 密钥缺失或少于 32 字节时应用拒绝启动。
-- CORS 来源通过 `JEEPAY_CORS_ALLOWED_ORIGINS` 配置；默认只包含本地三个前端地址。
+- CORS 来源通过 `OPENHUBS_PAY_CORS_ALLOWED_ORIGINS` 配置；默认只包含本地三个前端地址。
 - 不再使用允许任意来源并携带凭据的 CORS 配置。
 
 ## 框架迁移
@@ -45,7 +45,7 @@ Docker Compose 只包含以下基础服务和应用：
 - 使用 Spring Security 6 的 `requestMatchers`、方法安全与认证管理方式。
 - 将 Servlet、Validation、Annotation 等 API 迁移到 Jakarta 命名空间。
 - 统一由 Spring Boot BOM 管理 Spring 家族及常用依赖，删除不必要的显式覆盖。
-- Jeepay SDK 版本由父 POM 单点管理，消除 Payment 模块的版本分叉。
+- OpenHubs Pay SDK 版本由父 POM 单点管理，消除 Payment 模块的版本分叉。
 - 升级或隔离不兼容 Jakarta 的第三方支付 SDK，不回退整体框架版本。
 
 ## 安全修复
@@ -78,7 +78,7 @@ Docker Compose 只包含以下基础服务和应用：
 
 ## 前端与仓库治理
 
-- 移除 `jeepay-ui/.git`，将前端源码直接纳入主仓库。
+- 移除 `OpenHubs Pay-ui/.git`，将前端源码直接纳入主仓库。
 - 统一 workspace、lockfile 和 Node 20 构建入口。
 - 三个前端分别执行生产构建，修复 Vite、Vue、Axios、Pinia 与 TypeScript 的版本冲突。
 - 忽略 `node_modules`、`dist` 和本机环境文件，不提交生成物。

@@ -6,7 +6,7 @@ VERSION=latest
 # DockerHub 用户名前缀 / 私有镜像仓库，需要提前登陆好，编译完成后会自动上传
 DOCKER_NAMESPACE=registry.cn-beijing.aliyuncs.com/jiquankeji
 # 容器名字前缀
-IMAGE_NAME=jeepay
+IMAGE_NAME=openhubs-pay
 # buildx toolkit 名称
 BUILDER=${IMAGE_NAME}-builder
 # 平台
@@ -15,7 +15,7 @@ PLATFORM=linux/amd64,linux/arm64
 BACKEND_DEPS_IMAGE_NAME=${DOCKER_NAMESPACE}/${IMAGE_NAME}-deps:$VERSION
 FRONTEND_DEPS_IMAGE_NAME=${DOCKER_NAMESPACE}/${IMAGE_NAME}-ui-deps:$VERSION
 
-UI_FOLDER=./private-jeepay-ui
+UI_FOLDER=./private-openhubs-pay-ui
 
 TARGET=$1
 HAS_DEPS=$2
@@ -61,7 +61,7 @@ build_backend() {
 build_frontend() {
 
   rm -rf ${UI_FOLDER}
-  git clone https://gitee.com/jeequan/jeepay-ui.git ${UI_FOLDER}
+  git clone https://gitee.com/jeequan/openhubs-pay-ui.git ${UI_FOLDER}
 
   echo "== 项目前端"
 

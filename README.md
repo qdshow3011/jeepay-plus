@@ -1,4 +1,4 @@
-# Jeepay Plus
+# OpenHubs Pay Plus
 
 ## 本地构建与部署
 
@@ -8,23 +8,23 @@
 cp .env.example .env
 # 修改 .env 中全部 replace-with-* 值，并为两个 JWT 密钥设置至少 32 字节随机值
 ./mvnw clean test
-npm --prefix jeepay-ui install
-npm --prefix jeepay-ui run build
+npm --prefix OpenHubs Pay-ui install
+npm --prefix OpenHubs Pay-ui run build
 docker compose --env-file .env up --build
 ```
 
-提交前可运行 `scripts/verify-deployment.ps1` 与 `scripts/verify-security.ps1`。生产环境必须配置精确的 `JEEPAY_CORS_ALLOWED_ORIGINS`，不得使用 `*`。
+提交前可运行 `scripts/verify-deployment.ps1` 与 `scripts/verify-security.ps1`。生产环境必须配置精确的 `OPENHUBS_PAY_CORS_ALLOWED_ORIGINS`，不得使用 `*`。
 
-### 对比Jeepay开源版
-JeepayPro是基于开源版Jeepay搭建，重构部分服务端代码，增加进件、代理商系统、商户通APP、展业宝APP等功能。
+### 对比OpenHubs Pay开源版
+OpenHubsPayPro是基于开源版OpenHubs Pay搭建，重构部分服务端代码，增加进件、代理商系统、商户通APP、展业宝APP等功能。
 
-先有开源版Jeepay，再有商业版JeepayPro。
+先有开源版OpenHubs Pay，再有商业版OpenHubsPayPro。
 
-JeepayPro 耗时2个月精心打磨，做一个真正可落地使用的聚合支付系统，为商业客户提供完整的支付解决方案。
+OpenHubsPayPro 耗时2个月精心打磨，做一个真正可落地使用的聚合支付系统，为商业客户提供完整的支付解决方案。
 
-### JeePayPro商业版本演示地址：
+### OpenHubs PayPro商业版本演示地址：
 
-运营端：https://mgr.xxpayplus.com 帐号：jeepay 登录密码：jeepay123
+运营端：https://mgr.xxpayplus.com 帐号：OpenHubs Pay 登录密码：OpenHubs Pay123
 
 代理端：https://agent.xxpayplus.com 帐号：agenttest 登录密码：agent123123
 
@@ -32,7 +32,7 @@ JeepayPro 耗时2个月精心打磨，做一个真正可落地使用的聚合支
 
 系统采用JAVA语言开发，会java的技术人员可以自行二次开发
 
-JeePayPro是一套开箱即用、适合拿来直接运营的聚合支付系统。系统适合有技术团队的企业购买，我司可提供程序源码、技术文档和售后技术支持服务。
+OpenHubs PayPro是一套开箱即用、适合拿来直接运营的聚合支付系统。系统适合有技术团队的企业购买，我司可提供程序源码、技术文档和售后技术支持服务。
 
 程序源码和文档包括哪些？ 源码包括：所有Java服务端源码和前端源码，可二次开发，想怎么改就怎么改，So Easy !
 
@@ -52,8 +52,8 @@ JeePayPro是一套开箱即用、适合拿来直接运营的聚合支付系统�
 <tr>
 <th></th>
 <th>项目</th>
-<th>Jeepay开源版</th>
-<th>Jeepay Pro商业版</th>
+<th>OpenHubs Pay开源版</th>
+<th>OpenHubs Pay Pro商业版</th>
 </tr>
 </thead>
 <tbody><tr>

@@ -9,4 +9,4 @@
 logs
 *.log
 .env
-jeepay-ui.user-backup-*
+openhubs-pay-ui.user-backup-*

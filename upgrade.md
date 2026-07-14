@@ -53,7 +53,7 @@
 5. 优化：解决其他已知问题
 
 [v1.5.0_20210727]
-1. 新增：提取jeepay-components项目， 放置OSS, MQ公共组件包
+1. 新增：提取OpenHubs Pay-components项目， 放置OSS, MQ公共组件包
 2. 优化：重构多MQ的实现，对生产者和消费者项目的使用透明，支持无缝切换三个厂商
 3. 优化：ActiveMQ添加账密配置， 添加连接池pool配置
 4. 优化：修改聚合码前端项目的提示信息
@@ -79,14 +79,14 @@
 3. 新增：支付测试支持分账选项
 4. 修复：解决服务商配置修改后没有更新缓存的问题
 5. 修复：退款中的订单改为定时任务实时补单
-6. 修复 订单表记录表记录商户费率快照: https://gitee.com/jeequan/jeepay/issues/I46MDI
-7. 修复：退款订单表记录微信异常信息：https://gitee.com/jeequan/jeepay/issues/I47KUF
-8. 修复：主扫被扫都记录上游渠道用户ID: https://gitee.com/jeequan/jeepay/issues/I47KRW
+6. 修复 订单表记录表记录商户费率快照: https://gitee.com/jeequan/OpenHubs Pay/issues/I46MDI
+7. 修复：退款订单表记录微信异常信息：https://gitee.com/jeequan/OpenHubs Pay/issues/I47KUF
+8. 修复：主扫被扫都记录上游渠道用户ID: https://gitee.com/jeequan/OpenHubs Pay/issues/I47KRW
 
 [v1.8.0_20210910]
 1. 新增：商户系统添加退款操作并支持功能权限配置
-2. 修复：解决URL拼接问题，不再使用hutool拼接函数，改为自行拼接方式； https://gitee.com/jeequan/jeepay/issues/I484PM
-3. 优化：微信企业付款到零钱产品不支持服务商模式，在转账时候做限制，避免转出服务商资金 https://gitee.com/jeequan/jeepay/issues/I483FJ
+2. 修复：解决URL拼接问题，不再使用hutool拼接函数，改为自行拼接方式； https://gitee.com/jeequan/OpenHubs Pay/issues/I484PM
+3. 优化：微信企业付款到零钱产品不支持服务商模式，在转账时候做限制，避免转出服务商资金 https://gitee.com/jeequan/OpenHubs Pay/issues/I483FJ
 
 [v1.9.0_20210930]
 1. 新增：增加小新支付通道，对接交易和退款接口
@@ -94,7 +94,7 @@
 3. 修复：修复云闪付空串导致回调验签失败问题
 4. 修复：修复云闪付机构传参问题
 5. 优化：支付收银台项目发布在payment项目下
-6. 优化：优化支付宝服务商分账接口 https://gitee.com/jeequan/jeepay/issues/I4BNDT
+6. 优化：优化支付宝服务商分账接口 https://gitee.com/jeequan/OpenHubs Pay/issues/I4BNDT
 
 [v1.10.0_20211119]
 1. 新增：系统配置、 商户应用、服务商参数配置是否使用内存缓存支持开关式配置
@@ -105,13 +105,13 @@
 6. 新增：登录页面增加登录验证码默认超时时间，并给予用户反馈
 7. 新增：商户系统的支付测试和转账默认一个应用
 8. 新增：统一下单接口删除了channelUser字段，统一使用channelExtra传参
-9. 修复：角色权限关联表字段扩容，避免入库出现问题； https://gitee.com/jeequan/jeepay/issues/I4DKRL
+9. 修复：角色权限关联表字段扩容，避免入库出现问题； https://gitee.com/jeequan/OpenHubs Pay/issues/I4DKRL
 10. 修复：解决云闪付退款传参不正确导致的问题
 11. 修复：修复文件存储位置选择阿里云oss时上传位置错误的问题
-12. 修复：解决聚合码更新费率问题 ：https://gitee.com/jeequan/jeepay/issues/I4D2EB
+12. 修复：解决聚合码更新费率问题 ：https://gitee.com/jeequan/OpenHubs Pay/issues/I4D2EB
 13. 优化：优化支付工具类
 14. 优化：微信退款异常添加日志信息
-15. 优化：调整接口返回的ContentType: https://gitee.com/jeequan/jeepay/issues/I4H2UX
+15. 优化：调整接口返回的ContentType: https://gitee.com/jeequan/OpenHubs Pay/issues/I4H2UX
 
 [v1.11.0_20211223]
 1. 新增：增加PayPal支付通道（感谢@青木）
@@ -127,17 +127,17 @@
 3. 新增：增加关闭订单接口（微信、支付宝、云闪付已对接）
 4. 新增：增加分账失败重新发起功能转
 5. 优化：升级支付宝转账接口（sdk升级到4.22.22.ALL）
-6. 修复：修复微信v3接口小程序支付报错问题：https://gitee.com/jeequan/jeepay/issues/I4PJKX
+6. 修复：修复微信v3接口小程序支付报错问题：https://gitee.com/jeequan/OpenHubs Pay/issues/I4PJKX
 7. 修复：修复安全漏洞（升级mysql-connector-java、velocity-engine-core版本）
 8. 修复：修复删除服务商时查看子商户数量问题
 
 [v1.13.0_20220329]
-1. 优化：微信和支付宝接口增加支付超时时间：https://gitee.com/jeequan/jeepay/issues/I4WMK0
+1. 优化：微信和支付宝接口增加支付超时时间：https://gitee.com/jeequan/OpenHubs Pay/issues/I4WMK0
 2. 优化：优化微信支付V3接口对接
 3. 优化：项目支持jdk17编译
-4. 修复：修复paypal支付查询问题：https://gitee.com/jeequan/jeepay/issues/I4ZOHF
+4. 修复：修复paypal支付查询问题：https://gitee.com/jeequan/OpenHubs Pay/issues/I4ZOHF
 5. 修复：修复微信支付V2接口退款问题
-6. 修复：修复支付下单会使用已停用接口问题：https://gitee.com/jeequan/jeepay/issues/I4SM0M
+6. 修复：修复支付下单会使用已停用接口问题：https://gitee.com/jeequan/OpenHubs Pay/issues/I4SM0M
 
 [v1.14.0_20220708]
 1. 新增：增加docker的支持
@@ -152,7 +152,7 @@
 10. 修复：微信退款通知检验退款金额问题
 
 [v1.15.0_20220915]
-1. 新增：增加计全付(jeepay plus线上支付平台)支付渠道接口
+1. 新增：增加计全付(OpenHubs Pay plus线上支付平台)支付渠道接口
 2. 优化：微信H5支持同步跳转
 3. 修复：升级fastjson至1.2.83版
 4. 修复：修复微信app调起支付签名串问题
@@ -165,7 +165,7 @@
 5. 修复：修复阿里云oss下载路径问题
 
 [v2.0.0_20230319]
-1. 新增：重构支付渠道对接代码，支持接口市场下载安装：https://www.jeequan.com/ifstore/list.html
+1. 新增：重构支付渠道对接代码，支持接口市场下载安装：https://www.openhubs.com/ifstore/list.html
 2. 新增：增加订单创建时重写订单号方法
 3. 新增：增加转账订单补单功能
 4. 新增：增加微信、支付宝转账查询接口
@@ -184,7 +184,7 @@
 
 [v2.2.0_20230616]
 1. 新增：适配jdk11 17高版本支持（社区）
-2. 新增：支持Knife4j文档的适配，添加部分接口示例 http://pay.d.jeepay.vip/doc.html
+2. 新增：支持Knife4j文档的适配，添加部分接口示例 http://pay.d.OpenHubs Pay.vip/doc.html
 3. 优化：针对微信V3版本接口进行调整
 
 [v2.2.1_20230816]

@@ -26,10 +26,10 @@ jobs:
       - name: Backend tests
         run: ./mvnw -B test
       - name: Install frontend dependencies
-        working-directory: jeepay-ui
+        working-directory: openhubs-pay-ui
         run: npm install
       - name: Build all frontends
-        working-directory: jeepay-ui
+        working-directory: openhubs-pay-ui
         run: npm run build
       - name: Validate Compose
         run: docker compose --env-file .env.example config --quiet

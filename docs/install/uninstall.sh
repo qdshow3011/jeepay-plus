@@ -18,9 +18,9 @@ fi
 
 
 docker stop nginx118 && docker rm nginx118
-docker stop jeepaymanager && docker rm jeepaymanager
-docker stop jeepaymerchant && docker rm jeepaymerchant
-docker stop jeepaypayment && docker rm jeepaypayment
+docker stop openhubs-paymanager && docker rm openhubs-paymanager
+docker stop openhubs-paymerchant && docker rm openhubs-paymerchant
+docker stop openhubs-paypayment && docker rm openhubs-paypayment
 
 docker stop mysql8 && docker rm mysql8
 
@@ -28,6 +28,6 @@ docker stop redis6 && docker rm redis6
 
 docker stop activemq5 && docker rm activemq5
 
-docker network rm jeepay-net
+docker network rm openhubs-pay-net
 
 rm -rf $rootDir

@@ -1,0 +1,26 @@
+{
+  "name": "OpenHubs Pay-ui",
+  "version": "2.0.0",
+  "description": "OpenHubs Pay 前端项目 - 包括运营平台、商户系统、聚合码收银台",
+  "private": true,
+  "workspaces": [
+    "OpenHubs Pay-ui-cashier",
+    "OpenHubs Pay-ui-manager",
+    "OpenHubs Pay-ui-merchant"
+  ],
+  "scripts": {
+    "dev:cashier": "cd OpenHubs Pay-ui-cashier && npm run dev",
+    "dev:manager": "cd OpenHubs Pay-ui-manager && npm run dev",
+    "dev:merchant": "cd OpenHubs Pay-ui-merchant && npm run dev",
+    "build:cashier": "cd OpenHubs Pay-ui-cashier && npm run build",
+    "build:manager": "cd OpenHubs Pay-ui-manager && npm run build",
+    "build:merchant": "cd OpenHubs Pay-ui-merchant && npm run build",
+    "build": "npm run build:cashier && npm run build:manager && npm run build:merchant",
+    "check": "npm run build"
+  },
+  "engines": {
+    "node": ">=20 <23"
+  },
+  "author": "",
+  "license": "MIT"
+}

@@ -11,7 +11,7 @@ PROJECT_PATH=$(cd `dirname $0`; pwd)
 PROJECT_NAME="${PROJECT_PATH##*/}"
 
 #jar名称
-APP_NAME='jeepay-'$PROJECT_NAME'.jar'
+APP_NAME='openhubs-pay-'$PROJECT_NAME'.jar'
 
 #=======================================================================
 

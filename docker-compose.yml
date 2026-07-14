@@ -6,8 +6,8 @@
     environment:
       LANG: C.UTF-8
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
-      MYSQL_USER: ${MYSQL_USER:-jeepay}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openhubs_paydb}
+      MYSQL_USER: ${MYSQL_USER:-openhubs_pay}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
     expose:
       - "3306"
@@ -57,18 +57,18 @@
   payment:
     build:
       context: .
-      dockerfile: jeepay-payment/Dockerfile
+      dockerfile: openhubs-pay-payment/Dockerfile
     environment:
       MYSQL_HOST: mysql
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
-      MYSQL_USER: ${MYSQL_USER:-jeepay}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openhubs_paydb}
+      MYSQL_USER: ${MYSQL_USER:-openhubs_pay}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       ACTIVEMQ_HOST: activemq
       ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
-      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:?}
+      OPENHUBS_PAY_CORS_ALLOWED_ORIGINS: ${OPENHUBS_PAY_CORS_ALLOWED_ORIGINS:?}
     expose:
       - "9216"
     depends_on:
@@ -79,8 +79,8 @@
       activemq:
         condition: service_healthy
     volumes:
-      - payment-logs:/jeepayhomes/service/logs
-      - payment-uploads:/jeepayhomes/service/uploads
+      - payment-logs:/openhubs-pay-homes/service/logs
+      - payment-uploads:/openhubs-pay-homes/service/uploads
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9216/actuator/health"]
       interval: 30s
@@ -92,11 +92,11 @@
   manager:
     build:
       context: .
-      dockerfile: jeepay-manager/Dockerfile
+      dockerfile: openhubs-pay-manager/Dockerfile
     environment:
       MYSQL_HOST: mysql
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
-      MYSQL_USER: ${MYSQL_USER:-jeepay}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openhubs_paydb}
+      MYSQL_USER: ${MYSQL_USER:-openhubs_pay}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -104,7 +104,7 @@
       ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
       MANAGER_JWT_SECRET: ${MANAGER_JWT_SECRET:?MANAGER_JWT_SECRET is required}
-      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:?}
+      OPENHUBS_PAY_CORS_ALLOWED_ORIGINS: ${OPENHUBS_PAY_CORS_ALLOWED_ORIGINS:?}
     expose:
       - "9217"
     depends_on:
@@ -115,8 +115,8 @@
       activemq:
         condition: service_healthy
     volumes:
-      - manager-logs:/jeepayhomes/service/logs
-      - manager-uploads:/jeepayhomes/service/uploads
+      - manager-logs:/openhubs-pay-homes/service/logs
+      - manager-uploads:/openhubs-pay-homes/service/uploads
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9217/actuator/health"]
       interval: 30s
@@ -128,11 +128,11 @@
   merchant:
     build:
       context: .
-      dockerfile: jeepay-merchant/Dockerfile
+      dockerfile: openhubs-pay-merchant/Dockerfile
     environment:
       MYSQL_HOST: mysql
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
-      MYSQL_USER: ${MYSQL_USER:-jeepay}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openhubs_paydb}
+      MYSQL_USER: ${MYSQL_USER:-openhubs_pay}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -140,7 +140,7 @@
       ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
       MERCHANT_JWT_SECRET: ${MERCHANT_JWT_SECRET:?MERCHANT_JWT_SECRET is required}
-      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:?}
+      OPENHUBS_PAY_CORS_ALLOWED_ORIGINS: ${OPENHUBS_PAY_CORS_ALLOWED_ORIGINS:?}
     expose:
       - "9218"
     depends_on:
@@ -151,8 +151,8 @@
       activemq:
         condition: service_healthy
     volumes:
-      - merchant-logs:/jeepayhomes/service/logs
-      - merchant-uploads:/jeepayhomes/service/uploads
+      - merchant-logs:/openhubs-pay-homes/service/logs
+      - merchant-uploads:/openhubs-pay-homes/service/uploads
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9218/actuator/health"]
       interval: 30s
@@ -163,7 +163,7 @@
 
   ui-payment:
     build:
-      context: ./jeepay-ui
+      context: ./openhubs-pay-ui
       dockerfile: Dockerfile
       args:
         PLATFORM: cashier
@@ -185,7 +185,7 @@
 
   ui-manager:
     build:
-      context: ./jeepay-ui
+      context: ./openhubs-pay-ui
       dockerfile: Dockerfile
       args:
         PLATFORM: manager
@@ -207,7 +207,7 @@
 
   ui-merchant:
     build:
-      context: ./jeepay-ui
+      context: ./openhubs-pay-ui
       dockerfile: Dockerfile
       args:
         PLATFORM: merchant
