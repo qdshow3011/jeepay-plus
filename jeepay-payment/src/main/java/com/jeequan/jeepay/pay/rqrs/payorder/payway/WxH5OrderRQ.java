@@ -8,7 +8,7 @@ import lombok.Data;
  * 支付方式： WX_H5
  *
  * @author zhuxiao
- * @site https://www.jeequan.com
+ * @site https://www.openhubs.pay
  * @date 2021/6/8 17:34
  */
 @Data

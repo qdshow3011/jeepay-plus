@@ -1,4 +1,4 @@
-﻿# 构建阶段
+# 构建阶段
 FROM node:20-alpine AS builder
 
 ARG PLATFORM
@@ -19,7 +19,7 @@ FROM nginx:alpine
 ARG PLATFORM
 
 ENV BACKEND_HOST=${BACKEND_HOST}
-ENV PORT=${PORT:-80}
+ENV PORT=80
 
 WORKDIR /workspace
 
@@ -33,9 +33,9 @@ COPY --from=builder /workspace/default.conf.template /etc/nginx/templates/defaul
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
-EXPOSE ${PORT}
+EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-  CMD wget -q --spider http://localhost:${PORT}/ || exit 1
+  CMD curl -f -s http://localhost:80/ || exit 1
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

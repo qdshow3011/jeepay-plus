@@ -13,7 +13,7 @@ import java.io.File;
 * 代码生成器
 *
 * @author terrfly
-* @site https://www.jeepay.vip
+* @site https://www.openhubs.pay
 * @date 2021/6/8 17:47
 */
 public class MainGen {

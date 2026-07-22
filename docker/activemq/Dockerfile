@@ -1,4 +1,4 @@
-﻿FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 ENV ACTIVEMQ_VERSION 5.16.4
 ENV ACTIVEMQ apache-activemq-${ACTIVEMQ_VERSION}

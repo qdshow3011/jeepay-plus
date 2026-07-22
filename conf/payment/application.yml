@@ -1,4 +1,4 @@
-﻿#################################
+#################################
 # spring boot支持外部application.yml  读取优先级为：
 #   1、file:./config/（当前目录下的config文件夹）
 #   2、file:./（当前目录）
@@ -14,6 +14,8 @@ server:
   servlet:
     context-path: / #设置应用的目录.  前缀需要带/, 无需设置后缀, 示例 【 /xxx 】 or 【 / 】
 spring:
+  main:
+    allow-circular-references: true # 允许循环依赖（Spring Boot 3.x 默认禁止）
   servlet:
     multipart:
       enabled: true #是否启用http上传处理
@@ -30,8 +32,8 @@ spring:
       number_format: '#' #数字格式进行原样显示，不加格式化字符例如  100,00
   datasource:
     # yml填写url连接串， 无需将&符号进行转义
-    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/${MYSQL_DATABASE:jeepaydb}?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${MYSQL_USER:jeepay}
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:3306/${MYSQL_DATABASE:openhubsdb}?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:openhubs}
     password: ${MYSQL_PASSWORD}
     druid:
       # 连接池配置项
@@ -65,7 +67,7 @@ spring:
 # #activeMQ配置 ( 注意： activeMQ配置项需在spring的下级 )
   activemq:
     broker-url: failover:(tcp://${ACTIVEMQ_HOST:activemq}:61616?wireFormat.maxInactivityDuration=0)  #连接地址
-    in-memory: false # Jeepay项目不可使用内存模式， 需要连接多个消费者。
+    in-memory: false # 开算支付系统不可使用内存模式， 需要连接多个消费者。
     user: ${ACTIVEMQ_USER:system} # ActiveMQ认证账号由环境变量注入。
     password: ${ACTIVEMQ_PASSWORD}
     pool:
@@ -79,7 +81,7 @@ logging:
   level:
     root: info   #主日志级别
     com.jeequan.jeepay: debug   #该项目日志级别，当需要打印sql时请开启为debug
-  path: /jeepayhomes/service/logs  #日志存放地址
+  path: /openhubshomes/service/logs  #日志存放地址
 
 # knife4j APIDOC文档
 knife4j:
@@ -90,13 +92,13 @@ isys:
 
   #是否允许跨域请求 [生产环境建议关闭， 若api与前端项目没有在同一个域名下时，应开启此配置或在nginx统一配置允许跨域]
   allow-cors: true
-  cors-allowed-origins: ${JEEPAY_CORS_ALLOWED_ORIGINS:http://localhost:9226}
+  cors-allowed-origins: ${OPENHUBS_CORS_ALLOWED_ORIGINS:http://localhost:9226}
 
   #是否内存缓存配置信息: true表示开启如支付网关地址/商户应用配置/服务商配置等， 开启后需检查MQ的广播模式是否正常； false表示直接查询DB.
   cache-config: false
 
   oss:
-    file-root-path: /jeepayhomes/service/uploads #存储根路径 ( 无需以‘/’结尾 )
+    file-root-path: /openhubshomes/service/uploads #存储根路径 ( 无需以'/'结尾 )
     file-public-path: ${isys.oss.file-root-path}/public #公共读取块  ( 一般配合root-path参数进行设置，需以‘/’ 开头, 无需以‘/’结尾 )
     file-private-path: ${isys.oss.file-root-path}/private #私有化本地访问，不允许url方式公共读取 ( 一般配合root-path参数进行设置，需以‘/’ 开头, 无需以‘/’结尾  )
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2031, 河北计全科技有限公司 (https://www.jeequan.com & jeequan@126.com).
+ * Copyright (c) 2021-2031, 开算智能科技（青岛）有限公司 (https://www.openhubs.pay & contact@openhubs.pay).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.jeequan.jeepay.core.model.ApiRes;
 import com.jeequan.jeepay.pay.channel.IChannelUserService;
 import com.jeequan.jeepay.pay.ctrl.payorder.AbstractPayOrderController;
 import com.jeequan.jeepay.pay.rqrs.payorder.payway.AliJsapiOrderRQ;
+import com.jeequan.jeepay.pay.rqrs.payorder.payway.EpaH5OrderRQ;
 import com.jeequan.jeepay.pay.rqrs.payorder.payway.WxJsapiOrderRQ;
 import com.jeequan.jeepay.pay.service.ConfigContextQueryService;
 import com.jeequan.jeepay.pay.service.PayMchNotifyService;
@@ -41,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 * 聚合码支付二维码收银台controller
 *
 * @author terrfly
-* @site https://www.jeequan.com
+* @site https://www.openhubs.pay
 * @date 2021/6/8 17:27
 */
 @RestController
@@ -127,6 +128,8 @@ public class QrCashierController extends AbstractPayOrderController {
             apiRes = packageAlipayPayPackage(payOrder);
         }else if(wayCode.equals(CS.PAY_WAY_CODE.WX_JSAPI)){
             apiRes = packageWxpayPayPackage(payOrder);
+        }else if(wayCode.equals(CS.PAY_WAY_CODE.EPA_H5)){
+            apiRes = packageEpayPayPackage(payOrder);
         }
 
         return ApiRes.ok(apiRes);
@@ -149,6 +152,19 @@ public class QrCashierController extends AbstractPayOrderController {
         String openId = getValStringRequired("channelUserId");
         WxJsapiOrderRQ rq = new WxJsapiOrderRQ();
         rq.setOpenid(openId);
+        return this.unifiedOrder(getWayCode(), rq, payOrder);
+    }
+
+
+    /** 获取 EPay 的支付参数（H5模式） **/
+    private ApiRes packageEpayPayPackage(PayOrder payOrder) {
+
+        String epayType = getValString("epayType");
+        if(epayType == null || epayType.isEmpty()){
+            epayType = "alipay"; // 默认支付宝
+        }
+        EpaH5OrderRQ rq = new EpaH5OrderRQ();
+        rq.setEpayType(epayType);
         return this.unifiedOrder(getWayCode(), rq, payOrder);
     }
 
@@ -180,6 +196,8 @@ public class QrCashierController extends AbstractPayOrderController {
             return SpringBeansUtil.getBean(CS.IF_CODE.ALIPAY + serviceSuffix, cls);
         }else if(CS.PAY_WAY_CODE.WX_JSAPI.equals(wayCode)){
             return SpringBeansUtil.getBean(CS.IF_CODE.WXPAY + serviceSuffix, cls);
+        }else if(CS.PAY_WAY_CODE.EPA_H5.equals(wayCode)){
+            return SpringBeansUtil.getBean(CS.IF_CODE.EPAY + serviceSuffix, cls);
         }
 
         return null;

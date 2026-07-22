@@ -1,6 +1,6 @@
 #! /bin/sh
 #exec 2>>build.log  ##编译过程打印到日志文件中
-## 一键启动jeepay服务，包含mysqlDB/MQ/redis/javaservice/nginx   .Power by terrfly
+## 一键启动开算支付服务，包含mysqlDB/MQ/redis/javaservice/nginx   .Power by terrfly
 
 
 if [ $UID != '0' ]; then
@@ -99,7 +99,7 @@ echo "[2] Done. "
 sourcesInstallPath=$rootDir/sources/jeepay/docs/install
 
 # 创建一个 bridge网络
-docker network create jeepay-net
+docker network create openhubs-net
 
 # 第3步：下载mysql官方镜像 & 启动
 echo "[3] 下载并启动mysql容器.... "
@@ -109,7 +109,7 @@ echo "提示：  如下载进度缓慢，建议配置阿里云或其他镜像加
 cd $sourcesInstallPath && cp ./include/my.cnf $rootDir/mysql/config/my.cnf
 
 # 镜像启动
-docker run -p 3306:3306 --name mysql8 --network=jeepay-net  \
+docker run -p 3306:3306 --name mysql8 --network=openhubs-net  \
 --restart=always --privileged=true \
 -v /etc/localtime:/etc/localtime:ro \
 -v $rootDir/mysql/log:/var/log/mysql  \
@@ -140,8 +140,8 @@ done
 
 echo "[3] 初始化数据导入 ...... "
 # 创建数据库  && 导入数据
-echo "CREATE DATABASE jeepaydb DEFAULT CHARACTER SET utf8mb4" | docker exec -i mysql8 mysql -uroot -p$mysql_pwd
-docker exec -i mysql8 sh -c "mysql -uroot -p$mysql_pwd --default-character-set=utf8mb4  jeepaydb" < $rootDir/sources/jeepay/docs/sql/init.sql
+echo "CREATE DATABASE openhubsdb DEFAULT CHARACTER SET utf8mb4" | docker exec -i mysql8 mysql -uroot -p$mysql_pwd
+docker exec -i mysql8 sh -c "mysql -uroot -p$mysql_pwd --default-character-set=utf8mb4  openhubsdb" < $rootDir/sources/jeepay/docs/sql/init.sql
 
 echo "[3] Done. "
 
@@ -152,7 +152,7 @@ echo "[4] 下载并启动redis容器.... "
 cd $sourcesInstallPath && cp ./include/redis.conf $rootDir/redis/config/redis.conf
 
 # 镜像启动
-docker run -p 6379:6379 --name redis6 --network=jeepay-net  \
+docker run -p 6379:6379 --name redis6 --network=openhubs-net  \
 --restart=always --privileged=true \
 -v /etc/localtime:/etc/localtime:ro \
 -v $rootDir/redis/config/redis.conf:/etc/redis/redis.conf \
@@ -166,7 +166,7 @@ echo "[4] Done. "
 # 第5步：下载并启动activemq容器
 echo "[5] 下载并启动activemq容器.... "
 
-docker run -p 8161:8161 -p 61616:61616 --name activemq5 --network=jeepay-net \
+docker run -p 8161:8161 -p 61616:61616 --name activemq5 --network=openhubs-net \
 --restart=always \
 -v /etc/localtime:/etc/localtime:ro \
 -d jeepay/activemq:5.15.16
@@ -181,34 +181,34 @@ echo "[5] Done. "
 cd $rootDir/service/configs/ && cp -r $rootDir/sources/jeepay/conf/* .
 
 
-echo "[6.1] 下载并启动 java 项目 [ jeepaymanager  ] .... "
+echo "[6.1] 下载并启动 java 项目 [ openhubsmanager  ] .... "
 # 运行 java项目
-docker run -itd --name jeepaymanager --restart=always --network=jeepay-net \
+docker run -itd --name openhubsmanager --restart=always --network=openhubs-net \
 -p 9217:9217 \
 -v /etc/localtime:/etc/localtime:ro \
--v $rootDir/service/logs:/jeepayhomes/service/logs \
--v $rootDir/service/uploads:/jeepayhomes/service/uploads \
--v $rootDir/service/configs/manager/application.yml:/jeepayhomes/service/app/application.yml \
+-v $rootDir/service/logs:/openhubshomes/service/logs \
+-v $rootDir/service/uploads:/openhubshomes/service/uploads \
+-v $rootDir/service/configs/manager/application.yml:/openhubshomes/service/app/application.yml \
 -d jeepay/jeepay-manager
 
-echo "[6.2] 下载并启动 java 项目 [ jeepaymerchant  ] .... "
+echo "[6.2] 下载并启动 java 项目 [ openhubsmerchant  ] .... "
 # 运行 java项目
-docker run -itd --name jeepaymerchant --restart=always --network=jeepay-net \
+docker run -itd --name openhubsmerchant --restart=always --network=openhubs-net \
 -p 9218:9218 \
 -v /etc/localtime:/etc/localtime:ro \
--v $rootDir/service/logs:/jeepayhomes/service/logs \
--v $rootDir/service/uploads:/jeepayhomes/service/uploads \
--v $rootDir/service/configs/merchant/application.yml:/jeepayhomes/service/app/application.yml \
+-v $rootDir/service/logs:/openhubshomes/service/logs \
+-v $rootDir/service/uploads:/openhubshomes/service/uploads \
+-v $rootDir/service/configs/merchant/application.yml:/openhubshomes/service/app/application.yml \
 -d jeepay/jeepay-merchant
 
-echo "[6.3] 下载并启动 java 项目 [ jeepaypayment  ] .... "
+echo "[6.3] 下载并启动 java 项目 [ openhubspayment  ] .... "
 # 运行 java项目
-docker run -itd --name jeepaypayment --restart=always --network=jeepay-net \
+docker run -itd --name openhubspayment --restart=always --network=openhubs-net \
 -p 9216:9216 \
 -v /etc/localtime:/etc/localtime:ro \
--v $rootDir/service/logs:/jeepayhomes/service/logs \
--v $rootDir/service/uploads:/jeepayhomes/service/uploads \
--v $rootDir/service/configs/payment/application.yml:/jeepayhomes/service/app/application.yml \
+-v $rootDir/service/logs:/openhubshomes/service/logs \
+-v $rootDir/service/uploads:/openhubshomes/service/uploads \
+-v $rootDir/service/configs/payment/application.yml:/openhubshomes/service/app/application.yml \
 -d jeepay/jeepay-payment
 
 echo "[6] Done. "
@@ -235,13 +235,13 @@ docker run --name nginx118  \
 
 echo "[7] Done. "
 
-docker logs jeepaypayment
+docker logs openhubspayment
 
 echo ">>>>>>> "
 echo ">>>>>>> "
 echo ">>>>>>>安装完成， 所有的配置文件和项目文件都在：$rootDir 文件夹中。 "
 echo ">>>>>>>项目访问地址 （注意开通端口防火墙）：   "
-echo ">>>>>>>运营平台： http://外网IP:19217   账号密码： jeepay/jeepay123   "
+echo ">>>>>>>运营平台： http://外网IP:19217   账号密码： admin/admin123   "
 echo ">>>>>>>商户平台： http://外网IP:19218   账号密码： 需要登录运营平台手动创建。    "
 echo ">>>>>>>支付网关： http://外网IP:19216   "
 echo ">>>>>>>若配置域名请更改 $rootDir/nginx/conf/nginx.conf 配置文件。 "

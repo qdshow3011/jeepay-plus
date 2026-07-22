@@ -46,6 +46,20 @@ export function getPayOrderInfo () {
   })
 }
 
+/** EPay 支付接口 **/
+export function getEpayPackage (epayType, amount) {
+  return request.request({
+    url: '/api/cashier/pay',
+    method: 'POST',
+    data: {
+      wayCode: config.payWay.EPAY.wayCode,
+      token: config.cacheToken,
+      epayType: epayType,
+      amount: amount,
+    }
+  })
+}
+
 /** 取消订单 **/
 export function cancelPay () {
   return request.request({

@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
   { path: '/hub/:jeepayToken', name: 'Hub', component: () => import('../views/Hub.vue') },
+  { path: '/epay/:jeepayToken', name: 'EpayHub', component: () => import('../views/payway/Epay.vue') },
   { path: '/error', name: 'Error', component: () => import('../views/Error.vue') },
   { path: '/oauth2Callback/:jeepayToken', name: 'Oauth2Callback', component: () => import('../views/Oauth2Callback.vue') },
   {

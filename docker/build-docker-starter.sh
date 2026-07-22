@@ -6,7 +6,7 @@ VERSION=latest
 # DockerHub 用户名前缀 / 私有镜像仓库，需要提前登陆好，编译完成后会自动上传
 DOCKER_NAMESPACE=registry.cn-beijing.aliyuncs.com/jiquankeji
 # 容器名字前缀
-IMAGE_NAME=jeepay
+IMAGE_NAME=openhubs-pay
 # buildx toolkit 名称
 BUILDER=${IMAGE_NAME}-builder
 # 平台

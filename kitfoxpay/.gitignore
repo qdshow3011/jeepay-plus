@@ -1,0 +1,35 @@
+# 依赖
+node_modules/
+
+# 环境变量（.env 已在父 .gitignore 中排除）
+.env
+.env.local
+.env.*.local
+
+# 日志
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 临时文件
+*.tmp
+*.temp
+
+# Docker
+docker-compose.yml
+
+# 分发构建产物
+dist/

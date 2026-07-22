@@ -97,6 +97,8 @@ export const API_URL_ISV_PAYCONFIGS_LIST = '/api/isv/payConfigs'
 export const API_URL_MCH_PAYCONFIGS_LIST = '/api/mch/payConfigs'
 /** 商户支付通道配置 **/
 export const API_URL_MCH_PAYPASSAGE_LIST = '/api/mch/payPassages'
+/** EPay商户配置 **/
+export const API_URL_EPAY_CONFIG_LIST = '/api/epayConfig'
 /** 转账订单管理 **/
 export const API_URL_TRANSFER_ORDER_LIST = '/api/transferOrders'
 

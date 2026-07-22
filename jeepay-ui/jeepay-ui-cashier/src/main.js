@@ -10,7 +10,11 @@ import 'amfe-flexible'
  */
 router.beforeEach((to, from, next) => {
     // 免守卫路由名单（使用 passGuardRouteList 数组判断，而非字符串 includes）
-    if (config.passGuardRouteList.includes(to.name)) {
+    if (config.passGuardRouteList.includes(to.name) || to.name === 'EpayHub') {
+      const token = to.params[config.urlTokenName]
+      if (token) {
+        config.cacheToken = token
+      }
       next()
       return
     }

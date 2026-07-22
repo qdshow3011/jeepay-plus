@@ -1,4 +1,4 @@
-# Jeepay 全面现代化与完整性修复设计
+# OpenHubs PAY 全面现代化与完整性修复设计
 
 ## 目标
 
@@ -36,7 +36,7 @@ Docker Compose 只包含以下基础服务和应用：
 - 数据库密码、ActiveMQ 密码、JWT 密钥与其他敏感配置通过环境变量注入。
 - 仓库提交 `.env.example`，真实 `.env` 加入 `.gitignore`。
 - JWT 密钥缺失或少于 32 字节时应用拒绝启动。
-- CORS 来源通过 `JEEPAY_CORS_ALLOWED_ORIGINS` 配置；默认只包含本地三个前端地址。
+- CORS 来源通过 `OPENHUBS_CORS_ALLOWED_ORIGINS` 配置；默认只包含本地三个前端地址。
 - 不再使用允许任意来源并携带凭据的 CORS 配置。
 
 ## 框架迁移

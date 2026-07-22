@@ -1,6 +1,6 @@
 # Railway 部署指南
 
-本指南将帮助您将 Jeepay UI 项目部署到 Railway 平台。
+本指南将帮助您将 OpenHubs PAY UI 项目部署到 Railway 平台。
 
 ## 前置准备
 

@@ -8,7 +8,7 @@
 
 /** 应用配置项 **/
 export default {
-  APP_TITLE: 'Jeepay运营平台', // 设置浏览器title
+  APP_TITLE: '开算支付运营平台', // 设置浏览器title
   ACCESS_TOKEN_NAME: 'iToken' // 设置请求token的名字， 用于请求header 和 localstorage中存在名称
 }
 
@@ -34,5 +34,6 @@ export const asyncRouteDefine = {
   'TransferOrderListPage': { defaultPath: '/transferOrder', component: () => import('@/views/order/transfer/TransferOrderList.vue')  }, // 转账订单
   'MchNotifyListPage': { defaultPath: '/notify', component: () => import('@/views/order/notify/MchNotifyList.vue')  }, // 商户通知列表
   'SysConfigPage': { defaultPath: '/config', component: () => import('@/views/sys/config/SysConfig.vue')  }, // 系统配置
-  'SysLogPage': { defaultPath: '/log', component: () => import('@/views/sys/log/SysLog.vue')  } // 系统日志
+  'SysLogPage': { defaultPath: '/log', component: () => import('@/views/sys/log/SysLog.vue')  }, // 系统日志
+  'EpayConfigPage': { defaultPath: '/epayConfig', component: () => import('@/views/epay/List.vue')  } // EPay商户配置
 }

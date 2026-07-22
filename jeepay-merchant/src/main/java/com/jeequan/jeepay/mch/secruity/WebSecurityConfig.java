@@ -1,4 +1,4 @@
-﻿package com.jeequan.jeepay.mch.secruity;
+package com.jeequan.jeepay.mch.secruity;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

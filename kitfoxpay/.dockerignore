@@ -1,0 +1,12 @@
+.git
+.gitignore
+node_modules
+*.md
+*.log
+.DS_Store
+docker-compose*.yml
+Dockerfile
+.dockerignore
+dist/
+start.sh
+.github/

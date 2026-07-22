@@ -153,6 +153,23 @@ CREATE TABLE `t_mch_app` (
          PRIMARY KEY (`app_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商户应用表';
 
+-- EPay（易支付）商户配置表
+DROP TABLE IF EXISTS `t_epay_config`;
+CREATE TABLE `t_epay_config` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `pid` VARCHAR(64) NOT NULL COMMENT 'EPay商户PID（对外暴露的商户标识）',
+    `mch_no` VARCHAR(64) NOT NULL COMMENT '关联商户号',
+    `app_id` VARCHAR(64) NOT NULL COMMENT '关联应用ID',
+    `secret` VARCHAR(128) NOT NULL COMMENT 'EPay商户密钥',
+    `state` TINYINT(6) NOT NULL DEFAULT 1 COMMENT '状态: 0-停用, 1-启用',
+    `remark` VARCHAR(128) DEFAULT NULL COMMENT '备注',
+    `created_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+    `updated_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_pid` (`pid`),
+    KEY `idx_mch_no` (`mch_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='EPay（易支付）商户配置表';
+
 -- 服务商信息表
 DROP TABLE IF EXISTS t_isv_info;
 CREATE TABLE `t_isv_info` (
@@ -515,6 +532,14 @@ insert into t_sys_entitlement values('ENT_MCH', '商户管理', 'shop', '', 'Rou
         insert into t_sys_entitlement values('ENT_MCH_PAY_PASSAGE_CONFIG', '应用支付通道配置入口', 'no-icon', '', '', 'PB', 0, 1,  'ENT_MCH_PAY_PASSAGE_LIST', '0', 'MGR', now(), now());
         insert into t_sys_entitlement values('ENT_MCH_PAY_PASSAGE_ADD', '应用支付通道配置保存', 'no-icon', '', '', 'PB', 0, 1,  'ENT_MCH_PAY_PASSAGE_LIST', '0', 'MGR', now(), now());
 
+-- EPay易支付配置管理
+insert into t_sys_entitlement values('ENT_EPAY_CONFIG', 'EPay商户配置', 'setting', '/epayConfig', 'EpayConfigPage', 'ML', 0, 1,  'ENT_MCH_INFO', '25', 'MGR', now(), now());
+    insert into t_sys_entitlement values('ENT_EPAY_CONFIG_LIST', '页面：EPay配置列表', 'no-icon', '', '', 'PB', 0, 1,  'ENT_EPAY_CONFIG', '0', 'MGR', now(), now());
+    insert into t_sys_entitlement values('ENT_EPAY_CONFIG_ADD', '按钮：新增', 'no-icon', '', '', 'PB', 0, 1,  'ENT_EPAY_CONFIG', '0', 'MGR', now(), now());
+    insert into t_sys_entitlement values('ENT_EPAY_CONFIG_EDIT', '按钮：编辑', 'no-icon', '', '', 'PB', 0, 1,  'ENT_EPAY_CONFIG', '0', 'MGR', now(), now());
+    insert into t_sys_entitlement values('ENT_EPAY_CONFIG_VIEW', '按钮：详情', 'no-icon', '', '', 'PB', 0, 1,  'ENT_EPAY_CONFIG', '0', 'MGR', now(), now());
+    insert into t_sys_entitlement values('ENT_EPAY_CONFIG_DEL', '按钮：删除', 'no-icon', '', '', 'PB', 0, 1,  'ENT_EPAY_CONFIG', '0', 'MGR', now(), now());
+
 -- 服务商管理
 insert into t_sys_entitlement values('ENT_ISV', '服务商管理', 'block', '', 'RouteView', 'ML', 0, 1,  'ROOT', '40', 'MGR', now(), now());
     insert into t_sys_entitlement values('ENT_ISV_INFO', '服务商列表', 'profile', '/isv', 'IsvListPage', 'ML', 0, 1,  'ENT_ISV', '10', 'MGR', now(), now());
@@ -630,6 +655,13 @@ insert into t_sys_entitlement values('ENT_MCH_CENTER', '商户中心', 'team', '
         insert into t_sys_entitlement values('ENT_MCH_TRANSFER_CHANNEL_USER', '按钮：获取渠道用户', 'no-icon', '', '', 'PB', 0, 1,  'ENT_MCH_TRANSFER', '0', 'MCH', now(), now());
         insert into t_sys_entitlement values('ENT_MCH_TRANSFER_DO', '按钮：发起转账', 'no-icon', '', '', 'PB', 0, 1,  'ENT_MCH_TRANSFER', '0', 'MCH', now(), now());
 
+    insert into t_sys_entitlement values('ENT_MCH_EPAY_CONFIG', 'EPay配置', 'setting', '/epayConfig', 'EpayConfigPage', 'ML', 0, 1,  'ENT_MCH_CENTER', '40', 'MCH', now(), now());
+        insert into t_sys_entitlement values('ENT_MCH_EPAY_CONFIG_LIST', '页面：EPay配置列表', 'no-icon', '', '', 'PB', 0, 1,  'ENT_MCH_EPAY_CONFIG', '0', 'MCH', now(), now());
+        insert into t_sys_entitlement values('ENT_MCH_EPAY_CONFIG_ADD', '按钮：新增', 'no-icon', '', '', 'PB', 0, 1,  'ENT_MCH_EPAY_CONFIG', '0', 'MCH', now(), now());
+        insert into t_sys_entitlement values('ENT_MCH_EPAY_CONFIG_EDIT', '按钮：编辑', 'no-icon', '', '', 'PB', 0, 1,  'ENT_MCH_EPAY_CONFIG', '0', 'MCH', now(), now());
+        insert into t_sys_entitlement values('ENT_MCH_EPAY_CONFIG_VIEW', '按钮：详情', 'no-icon', '', '', 'PB', 0, 1,  'ENT_MCH_EPAY_CONFIG', '0', 'MCH', now(), now());
+        insert into t_sys_entitlement values('ENT_MCH_EPAY_CONFIG_DEL', '按钮：删除', 'no-icon', '', '', 'PB', 0, 1,  'ENT_MCH_EPAY_CONFIG', '0', 'MCH', now(), now());
+
 -- 【商户系统】 订单管理
 insert into t_sys_entitlement values('ENT_ORDER', '订单中心', 'transaction', '', 'RouteView', 'ML', 0, 1,  'ROOT', '20', 'MCH', now(), now());
     insert into t_sys_entitlement values('ENT_PAY_ORDER', '订单管理', 'account-book', '/pay', 'PayOrderListPage', 'ML', 0, 1,  'ENT_ORDER', '10', 'MCH', now(), now());
@@ -690,9 +722,13 @@ insert into t_sys_role values ('ROLE_OP', '普通操作员', 'MGR', '0', '2021-0
 -- 角色权限关联， [超管]用户 拥有所有权限
 -- insert into t_sys_role_ent_rela select '801', ent_id from t_sys_entitlement;
 
--- 超管用户： jeepay / jeepay123
-insert into t_sys_user values (801, 'jeepay', '超管', '13000000001', '1', 'https://jeequan.oss-cn-beijing.aliyuncs.com/jeepay/img/defava_m.png', 'D0001', 1, 1, 'MGR', '0', '2020-06-13', '2020-06-13');
-insert into t_sys_user_auth values (801, '801', '1', 'jeepay', '$2a$10$WKuPJKE1XhX15ibqDM745eOCaZZVUiRitUjEyX6zVNd9k.cQXfzGa', 'testkey', 'MGR');
+-- 超管用户： admin / admin123
+insert into t_sys_user values (801, 'admin', '超管', '13000000001', '1', 'https://jeequan.oss-cn-beijing.aliyuncs.com/jeepay/img/defava_m.png', 'D0001', 1, 1, 'MGR', '0', '2020-06-13', '2020-06-13');
+insert into t_sys_user_auth values (801, '801', '1', 'admin', '$2a$10$RVVfRLUv8r3D1t.8QHvZSuEW.eqUmrRhtkLg0ONO7Ml3pyAlJQMDa', 'testkey', 'MGR');
+
+-- 商户超管用户： admin / admin123
+insert into t_sys_user values (802, 'admin', '商户超管', '13000000002', '1', 'https://jeequan.oss-cn-beijing.aliyuncs.com/jeepay/img/defava_m.png', 'M0001', 1, 1, 'MCH', '0', '2020-06-13', '2020-06-13');
+insert into t_sys_user_auth values (802, '802', '1', 'admin', '$2a$10$RVVfRLUv8r3D1t.8QHvZSuEW.eqUmrRhtkLg0ONO7Ml3pyAlJQMDa', 'testkey', 'MCH');
 
 -- insert into t_sys_user_role_rela values (801, 801);
 
@@ -774,4 +810,13 @@ VALUES ('plspay', '计全付', 1, 0, 1,
         '[{"name":"signType","desc":"签名方式","type":"radio","verify":"required","values":"MD5,RSA2","titles":"MD5,RSA2"},{"name":"merchantNo","desc":"计全付商户号","type":"text","verify":"required"},{"name":"appId","desc":"应用ID","type":"text","verify":"required"},{"name":"appSecret","desc":"md5秘钥","type":"textarea","verify":"required","star":"1"},{"name":"rsa2AppPrivateKey","desc":"RSA2: 应用私钥","type":"textarea","verify":"required","star":"1"},{"name":"rsa2PayPublicKey","desc":"RSA2: 支付网关公钥","type":"textarea","verify":"required","star":"1"}]',
         '[{"wayCode": "ALI_APP"}, {"wayCode": "ALI_BAR"}, {"wayCode": "ALI_JSAPI"}, {"wayCode": "ALI_LITE"}, {"wayCode": "ALI_PC"}, {"wayCode": "ALI_QR"}, {"wayCode": "ALI_WAP"}, {"wayCode": "WX_APP"}, {"wayCode": "WX_BAR"}, {"wayCode": "WX_H5"}, {"wayCode": "WX_JSAPI"}, {"wayCode": "WX_LITE"}, {"wayCode": "WX_NATIVE"}]',
         'http://jeequan.oss-cn-beijing.aliyuncs.com/jeepay/img/plspay.svg', '#0CACFF', 1, '计全付');
+
+-- 易支付聚合支付通道
+INSERT INTO t_pay_interface_define (if_code, if_name, is_mch_mode, is_isv_mode, config_page_type, isv_params, isvsub_mch_params, normal_mch_params, way_codes, icon, bg_color, state, remark)
+VALUES ('epay', '易支付', 1, 0, 1,
+        NULL,
+        NULL,
+        '[{"name":"pid","desc":"商户PID","type":"text","verify":"required"},{"name":"key","desc":"商户密钥","type":"textarea","verify":"required","star":"1"},{"name":"payUrl","desc":"支付网关地址","type":"text","verify":"required"}]',
+        '[{"wayCode": "EPA_H5"}, {"wayCode": "EPA_QR"}]',
+        '', '#FF6B35', 1, '易支付聚合支付通道');
 

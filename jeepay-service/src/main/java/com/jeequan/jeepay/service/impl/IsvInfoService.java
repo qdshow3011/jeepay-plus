@@ -1,5 +1,5 @@
-﻿/*
- * Copyright (c) 2021-2031, 河北计全科技有限公司 (https://www.jeequan.com & jeequan@126.com).
+/*
+ * Copyright (c) 2021-2031, 开算智能科技（青岛）有限公司 (https://www.jeequan.com & contact@openhubs.pay).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.

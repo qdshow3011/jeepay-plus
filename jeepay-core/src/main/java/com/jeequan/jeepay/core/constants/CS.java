@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2031, 河北计全科技有限公司 (https://www.jeequan.com & jeequan@126.com).
+ * Copyright (c) 2021-2031, 开算智能科技（青岛）有限公司 (https://www.jeequan.com & contact@openhubs.pay).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -148,6 +148,7 @@ public class CS {
         String XXPAY = "xxpay";     // 小新支付
         String PPPAY = "pppay";     // Paypal 支付
         String PLSPAY = "plspay";     // 计全支付plus
+        String EPAY = "epay";       // 易支付
     }
 
 
@@ -185,6 +186,9 @@ public class CS {
         String UP_JSAPI = "UP_JSAPI"; // 银联JS支付
 
         String PP_PC = "PP_PC"; // Paypal 支付
+
+        String EPA_H5 = "EPA_H5";  // 易支付H5支付
+        String EPA_QR = "EPA_QR";  // 易支付扫码支付
     }
 
     //支付数据包 类型

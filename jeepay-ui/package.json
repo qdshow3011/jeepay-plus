@@ -1,7 +1,7 @@
 {
   "name": "jeepay-ui",
   "version": "2.0.0",
-  "description": "Jeepay 前端项目 - 包括运营平台、商户系统、聚合码收银台",
+  "description": "OpenHubs PAY 前端项目 - 包括运营平台、商户系统、聚合码收银台",
   "private": true,
   "workspaces": [
     "jeepay-ui-cashier",

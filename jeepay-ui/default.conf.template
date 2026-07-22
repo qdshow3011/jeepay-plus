@@ -9,7 +9,11 @@ server {
     location /api/ {
         proxy_next_upstream http_502 http_504 error timeout invalid_header;
 
-        proxy_pass http://${BACKEND_HOST};
+        # Use Docker's internal DNS resolver and a variable to force dynamic DNS resolution.
+        # Otherwise Nginx caches the backend IP at startup, causing 502 after container restarts.
+        resolver 127.0.0.11 valid=10s;
+        set $backend "${BACKEND_HOST}";
+        proxy_pass http://$backend;
 
         proxy_set_header Host  $host;
         proxy_set_header X-Real-IP $remote_addr;

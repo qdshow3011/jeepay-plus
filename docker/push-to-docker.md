@@ -5,7 +5,7 @@ mvn install
 2. 构建镜像及推送镜像（不需要docker环境）
 ```
 export DOCKER_REGISTRY=registry.cn-beijing.aliyuncs.com
-export DOCKER_NAMESPACE=jeequan
+export DOCKER_NAMESPACE=openhubs-pay
 export DOCKER_IMAGE_TAG=v1.14.0-alpha
 export DOCKER_REGISTRY_USERNAME=username1
 export DOCKER_REGISTRY_PASSWORD=password1

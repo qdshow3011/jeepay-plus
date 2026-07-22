@@ -1,4 +1,4 @@
-﻿services:
+services:
   mysql:
     build:
       context: .
@@ -6,15 +6,17 @@
     environment:
       LANG: C.UTF-8
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
-      MYSQL_USER: ${MYSQL_USER:-jeepay}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openhubsdb}
+      MYSQL_USER: ${MYSQL_USER:-openhubs}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
     expose:
       - "3306"
+    ports:
+      - "3306:3306"
     volumes:
       - mysql:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "MYSQL_PWD=$${MYSQL_ROOT_PASSWORD} mysql -uroot -e \"SELECT 1 FROM $${MYSQL_DATABASE}.t_sys_config LIMIT 1\" || exit 1"]
+      test: ["CMD-SHELL", "MYSQL_PWD=$${MYSQL_ROOT_PASSWORD} mysql -uroot -e \"SELECT 1\" || exit 1"]
       interval: 10s
       timeout: 10s
       retries: 30
@@ -44,6 +46,8 @@
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
     expose:
       - "61616"
+    ports:
+      - "8161:8161"
     volumes:
       - activemq:/opt/activemq/data
     healthcheck:
@@ -60,17 +64,19 @@
       dockerfile: jeepay-payment/Dockerfile
     environment:
       MYSQL_HOST: mysql
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
-      MYSQL_USER: ${MYSQL_USER:-jeepay}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openhubsdb}
+      MYSQL_USER: ${MYSQL_USER:-openhubs}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       ACTIVEMQ_HOST: activemq
       ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
-      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:?}
+      OPENHUBS_CORS_ALLOWED_ORIGINS: ${OPENHUBS_CORS_ALLOWED_ORIGINS:?}
     expose:
       - "9216"
+    ports:
+      - "9216:9216"
     depends_on:
       mysql:
         condition: service_healthy
@@ -79,8 +85,8 @@
       activemq:
         condition: service_healthy
     volumes:
-      - payment-logs:/jeepayhomes/service/logs
-      - payment-uploads:/jeepayhomes/service/uploads
+      - payment-logs:/openhubshomes/service/logs
+      - payment-uploads:/openhubshomes/service/uploads
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9216/actuator/health"]
       interval: 30s
@@ -95,8 +101,8 @@
       dockerfile: jeepay-manager/Dockerfile
     environment:
       MYSQL_HOST: mysql
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
-      MYSQL_USER: ${MYSQL_USER:-jeepay}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openhubsdb}
+      MYSQL_USER: ${MYSQL_USER:-openhubs}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -104,9 +110,11 @@
       ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
       MANAGER_JWT_SECRET: ${MANAGER_JWT_SECRET:?MANAGER_JWT_SECRET is required}
-      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:?}
+      OPENHUBS_CORS_ALLOWED_ORIGINS: ${OPENHUBS_CORS_ALLOWED_ORIGINS:?}
     expose:
       - "9217"
+    ports:
+      - "9217:9217"
     depends_on:
       mysql:
         condition: service_healthy
@@ -115,8 +123,8 @@
       activemq:
         condition: service_healthy
     volumes:
-      - manager-logs:/jeepayhomes/service/logs
-      - manager-uploads:/jeepayhomes/service/uploads
+      - manager-logs:/openhubshomes/service/logs
+      - manager-uploads:/openhubshomes/service/uploads
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9217/actuator/health"]
       interval: 30s
@@ -131,8 +139,8 @@
       dockerfile: jeepay-merchant/Dockerfile
     environment:
       MYSQL_HOST: mysql
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-jeepaydb}
-      MYSQL_USER: ${MYSQL_USER:-jeepay}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openhubsdb}
+      MYSQL_USER: ${MYSQL_USER:-openhubs}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -140,9 +148,11 @@
       ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
       MERCHANT_JWT_SECRET: ${MERCHANT_JWT_SECRET:?MERCHANT_JWT_SECRET is required}
-      JEEPAY_CORS_ALLOWED_ORIGINS: ${JEEPAY_CORS_ALLOWED_ORIGINS:?}
+      OPENHUBS_CORS_ALLOWED_ORIGINS: ${OPENHUBS_CORS_ALLOWED_ORIGINS:?}
     expose:
       - "9218"
+    ports:
+      - "9218:9218"
     depends_on:
       mysql:
         condition: service_healthy
@@ -151,8 +161,8 @@
       activemq:
         condition: service_healthy
     volumes:
-      - merchant-logs:/jeepayhomes/service/logs
-      - merchant-uploads:/jeepayhomes/service/uploads
+      - merchant-logs:/openhubshomes/service/logs
+      - merchant-uploads:/openhubshomes/service/uploads
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9218/actuator/health"]
       interval: 30s
@@ -172,11 +182,13 @@
       PORT: 80
     expose:
       - "80"
+    ports:
+      - "9226:80"
     depends_on:
       payment:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1"]
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:80/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -194,11 +206,13 @@
       PORT: 80
     expose:
       - "80"
+    ports:
+      - "9227:80"
     depends_on:
       manager:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1"]
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:80/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -216,11 +230,46 @@
       PORT: 80
     expose:
       - "80"
+    ports:
+      - "9228:80"
     depends_on:
       merchant:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1"]
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  # ============================================================
+  # KitfoxPay - 易支付协议适配网关
+  # 将 NewAPI 等下游系统的易支付协议请求转换为 Jeepay API 调用
+  # ============================================================
+  kitfoxpay:
+    build:
+      context: ./kitfoxpay
+      dockerfile: Dockerfile
+    container_name: openhubs-kitfoxpay
+    ports:
+      - "9229:9219"
+    environment:
+      JEEPAY_BASE_URL: http://payment:9216
+      JEEPAY_MCH_NO: ${KITFOX_MCH_NO:-M1784708760}
+      JEEPAY_APP_ID: ${KITFOX_APP_ID:-6a607e98e4b022b84e41f0e2}
+      JEEPAY_PRIVATE_KEY: ${KITFOX_PRIVATE_KEY}
+      EPAY_PID: ${KITFOX_EPAY_PID:-1001}
+      EPAY_KEY: ${KITFOX_EPAY_KEY:-CHANGE_ME_32_CHARS_KEY_HERE}
+      SERVER_HOST: "0.0.0.0"
+      SERVER_PORT: "9219"
+      SITE_DOMAIN: ${KITFOX_SITE_DOMAIN:-http://localhost:9229}
+      ADMIN_PASSWORD: ${KITFOX_ADMIN_PASSWORD:-admin123}
+    depends_on:
+      payment:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:9219/api/health',r=>{process.exit(r.statusCode===200?0:1)})"]
       interval: 30s
       timeout: 10s
       retries: 3

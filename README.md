@@ -1,28 +1,42 @@
-# Jeepay Plus
+# OpenHubs PAY
 
 ## 本地构建与部署
 
 环境要求：Java 17、Node.js 20、Docker Compose、PowerShell 7（配置检查）。本仓库只使用 ActiveMQ，前后端源码均由同一 Git 仓库管理。
 
 ```bash
+# 1. 配置环境变量
 cp .env.example .env
-# 修改 .env 中全部 replace-with-* 值，并为两个 JWT 密钥设置至少 32 字节随机值
-./mvnw clean test
+# 修改 .env 中全部 replace-with-* 值，并为两个 JWT 密钥设置至少 32 字节随机值。
+# 生成 32 字节随机密钥: openssl rand -base64 32
+
+# 2. 构建后端（跳过测试，测试需要数据库连接）
+./mvnw clean package -DskipTests
+
+# 3. 安装前端依赖并构建
 npm --prefix jeepay-ui install
 npm --prefix jeepay-ui run build
+
+# 4. 启动全部服务
 docker compose --env-file .env up --build
 ```
 
-提交前可运行 `scripts/verify-deployment.ps1` 与 `scripts/verify-security.ps1`。生产环境必须配置精确的 `JEEPAY_CORS_ALLOWED_ORIGINS`，不得使用 `*`。
+构建顺序说明：
+- 后端 Maven 模块按依赖关系自动编排（core → service → components → payment/manager/merchant）
+- `jeepay-z-codegen` 为独立代码生成工具，不参与主构建
+- 前端通过 npm workspaces 并行构建 cashier、manager、merchant 三个子项目
+- Docker Compose 按 depends_on 自动编排服务启动顺序（MySQL → Redis/ActiveMQ → 后端 → 前端）
 
-### 对比Jeepay开源版
-JeepayPro是基于开源版Jeepay搭建，重构部分服务端代码，增加进件、代理商系统、商户通APP、展业宝APP等功能。
+提交前可运行 `scripts/verify-deployment.ps1` 与 `scripts/verify-security.ps1`。生产环境必须配置精确的 `OPENHUBS_CORS_ALLOWED_ORIGINS`，不得使用 `*`。
 
-先有开源版Jeepay，再有商业版JeepayPro。
+### 对比OpenHubs PAY开源版
+OpenHubs PAY Pro是基于开源版OpenHubs PAY搭建，重构部分服务端代码，增加进件、代理商系统、商户通APP、展业宝APP等功能。
 
-JeepayPro 耗时2个月精心打磨，做一个真正可落地使用的聚合支付系统，为商业客户提供完整的支付解决方案。
+先有开源版OpenHubs PAY，再有商业版OpenHubs PAY Pro。
 
-### JeePayPro商业版本演示地址：
+OpenHubs PAY Pro 耗时2个月精心打磨，做一个真正可落地使用的聚合支付系统，为商业客户提供完整的支付解决方案。
+
+### OpenHubs PAY Pro商业版本演示地址：
 
 运营端：https://mgr.xxpayplus.com 帐号：jeepay 登录密码：jeepay123
 
@@ -32,7 +46,7 @@ JeepayPro 耗时2个月精心打磨，做一个真正可落地使用的聚合支
 
 系统采用JAVA语言开发，会java的技术人员可以自行二次开发
 
-JeePayPro是一套开箱即用、适合拿来直接运营的聚合支付系统。系统适合有技术团队的企业购买，我司可提供程序源码、技术文档和售后技术支持服务。
+OpenHubs PAY Pro是一套开箱即用、适合拿来直接运营的聚合支付系统。系统适合有技术团队的企业购买，我司可提供程序源码、技术文档和售后技术支持服务。
 
 程序源码和文档包括哪些？ 源码包括：所有Java服务端源码和前端源码，可二次开发，想怎么改就怎么改，So Easy !
 
@@ -52,8 +66,8 @@ JeePayPro是一套开箱即用、适合拿来直接运营的聚合支付系统�
 <tr>
 <th></th>
 <th>项目</th>
-<th>Jeepay开源版</th>
-<th>Jeepay Pro商业版</th>
+<th>OpenHubs PAY开源版</th>
+<th>OpenHubs PAY Pro商业版</th>
 </tr>
 </thead>
 <tbody><tr>

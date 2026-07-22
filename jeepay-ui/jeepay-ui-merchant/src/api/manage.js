@@ -98,6 +98,9 @@ export const API_URL_DIVISION_RECEIVER = '/api/divisionReceivers'
 /** 分账记录管理 **/
 export const API_URL_PAY_ORDER_DIVISION_RECORD_LIST = '/api/division/records'
 
+/** EPay商户配置 **/
+export const API_URL_MCH_EPAY_CONFIG_LIST = '/api/mch/epayConfig'
+
 /** 上传图片/文件地址 **/
 export const upload = {
   avatar: request.baseUrl + '/api/ossFiles/avatar',

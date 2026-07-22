@@ -1,6 +1,6 @@
-# Jeepay UI
+# OpenHubs PAY UI
 
-Jeepay 前端项目，包括运营平台、商户系统、聚合码收银台。
+OpenHubs PAY 前端项目，包括运营平台、商户系统、聚合码收银台。
 
 三个子项目均采用 **Vue 3** + **Vite** 构建，UI 框架使用 Ant Design Vue（管理端/商户端）。
 

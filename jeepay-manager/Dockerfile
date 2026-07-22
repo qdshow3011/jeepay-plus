@@ -5,17 +5,17 @@ COPY . .
 RUN mvn -B -pl jeepay-manager -am package -DskipTests
 
 FROM eclipse-temurin:17-jre-jammy
-LABEL maintainer="Jeepay Team"
+LABEL maintainer="OpenHubs PAY Team"
 ENV LANG=C.UTF-8 TZ=Asia/Shanghai
 RUN apt-get update && apt-get install -y --no-install-recommends curl fontconfig fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/* \
-    && groupadd --system jeepay && useradd --system --gid jeepay --home /jeepayhomes jeepay \
-    && mkdir -p /jeepayhomes/service/app /jeepayhomes/service/logs /jeepayhomes/service/uploads \
-    && chown -R jeepay:jeepay /jeepayhomes
-COPY --from=builder --chown=jeepay:jeepay /workspace/jeepay-manager/target/jeepay-manager.jar /jeepayhomes/service/app/jeepay-manager.jar
-COPY --chown=jeepay:jeepay conf/manager/application.yml /jeepayhomes/service/app/application.yml
-USER jeepay
-WORKDIR /jeepayhomes/service/app
+    && groupadd --system openhubs && useradd --system --gid openhubs --home /openhubshomes openhubs \
+    && mkdir -p /openhubshomes/service/app /openhubshomes/service/logs /openhubshomes/service/uploads \
+    && chown -R openhubs:openhubs /openhubshomes
+COPY --from=builder --chown=openhubs:openhubs /workspace/jeepay-manager/target/jeepay-manager.jar /openhubshomes/service/app/jeepay-manager.jar
+COPY --chown=openhubs:openhubs conf/manager/application.yml /openhubshomes/service/app/application.yml
+USER openhubs
+WORKDIR /openhubshomes/service/app
 EXPOSE 9217
 HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=5 CMD curl --fail --silent http://localhost:9217/actuator/health || exit 1
 ENTRYPOINT ["java", "-jar", "jeepay-manager.jar"]

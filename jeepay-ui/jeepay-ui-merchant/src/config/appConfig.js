@@ -8,7 +8,7 @@
 
 /** 应用配置项 **/
 export default {
-  APP_TITLE: 'Jeepay商户系统', // 设置浏览器title
+  APP_TITLE: '开算支付商户系统', // 设置浏览器title
   ACCESS_TOKEN_NAME: 'iToken', // 设置请求token的名字， 用于请求header 和 localstorage中存在名称
 }
 
@@ -61,4 +61,9 @@ export const asyncRouteDefine = {
     defaultPath: '/divisionRecord',
     component: () => import('@/views/division/record/DivisionRecordPage.vue'),
   }, // 分账记录
+
+  EpayConfigPage: {
+    defaultPath: '/epayConfig',
+    component: () => import('@/views/epay/List.vue'),
+  }, // EPay商户配置
 }

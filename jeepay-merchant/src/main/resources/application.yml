@@ -9,5 +9,5 @@ spring:
 #系统业务参数
 isys:
     jwt-secret: ${MERCHANT_JWT_SECRET} # 至少32字节，禁止提交真实密钥
-    cors-allowed-origins: ${JEEPAY_CORS_ALLOWED_ORIGINS:http://localhost:9228}
+    cors-allowed-origins: ${OPENHUBS_CORS_ALLOWED_ORIGINS:http://localhost:9228}
 

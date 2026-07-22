@@ -1,4 +1,4 @@
-# Jeepay Full Modernization Implementation Plan
+# OpenHubs PAY Full Modernization Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -136,7 +136,7 @@ ACTIVEMQ_USER=system
 ACTIVEMQ_PASSWORD=change-me-mq
 MANAGER_JWT_SECRET=replace-with-at-least-32-random-bytes
 MERCHANT_JWT_SECRET=replace-with-at-least-32-random-bytes
-JEEPAY_CORS_ALLOWED_ORIGINS=http://localhost:9226,http://localhost:9227,http://localhost:9228
+OPENHUBS_CORS_ALLOWED_ORIGINS=http://localhost:9226,http://localhost:9227,http://localhost:9228
 ```
 
 在 `.gitignore` 加入：
@@ -393,7 +393,7 @@ SecurityFilterChain securityFilterChain(HttpSecurity http,
 
 - [ ] **Step 5: 从配置生成 CORS 白名单**
 
-解析 `${JEEPAY_CORS_ALLOWED_ORIGINS:http://localhost:9226,http://localhost:9227,http://localhost:9228}`，调用 `setAllowedOrigins`，保留 credentials，不使用通配符。
+解析 `${OPENHUBS_CORS_ALLOWED_ORIGINS:http://localhost:9226,http://localhost:9227,http://localhost:9228}`，调用 `setAllowedOrigins`，保留 credentials，不使用通配符。
 
 - [ ] **Step 6: 运行安全测试**
 

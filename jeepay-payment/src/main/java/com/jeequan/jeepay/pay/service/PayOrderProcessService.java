@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2031, 河北计全科技有限公司 (https://www.jeequan.com & jeequan@126.com).
+ * Copyright (c) 2021-2031, 开算智能科技（青岛）有限公司 (https://www.openhubs.pay & contact@openhubs.pay).
  * <p>
  * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE 3.0;
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 * 订单处理通用逻辑
 *
 * @author terrfly
-* @site https://www.jeequan.com
+* @site https://www.openhubs.pay
 * @date 2021/8/22 16:50
 */
 @Service
@@ -42,6 +42,7 @@ public class PayOrderProcessService {
 
     @Autowired private PayOrderService payOrderService;
     @Autowired private PayMchNotifyService payMchNotifyService;
+    @Autowired private EpayNotifyService epayNotifyService;
     @Autowired private IMQSender mqSender;
 
     /** 明确成功的处理逻辑（除更新订单其他业务） **/
@@ -58,6 +59,9 @@ public class PayOrderProcessService {
 
         //发送商户通知
         payMchNotifyService.payOrderNotify(payOrder);
+
+        //EPay异步通知（New API回调）
+        epayNotifyService.notifyEpayOrder(payOrder);
 
     }
 
