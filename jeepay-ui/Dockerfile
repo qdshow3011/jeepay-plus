@@ -2,15 +2,32 @@
 FROM node:20-alpine AS builder
 
 ARG PLATFORM
-ARG NPM_REGISTRY=https://registry.npmjs.org
+ARG NPM_REGISTRY=https://registry.npmmirror.com
+
+# 防止 Vite 构建时 OOM（4GB 限制，适配小型服务器）
+ENV NODE_OPTIONS=--max-old-space-size=4096
 
 WORKDIR /workspace
 
-COPY . /workspace
+# 第1层: 仅复制 package.json — 依赖不变时可以复用 Docker 缓存，跳过漫长的 npm install
+COPY package.json ./
+COPY jeepay-ui-cashier/package.json ./jeepay-ui-cashier/
+COPY jeepay-ui-manager/package.json ./jeepay-ui-manager/
+COPY jeepay-ui-merchant/package.json ./jeepay-ui-merchant/
 
+# 第2层: 安装全部 workspace 依赖（缓存友好，package.json 不变则跳过）
+# 默认使用 npmmirror.com 国内镜像，可通过 build-arg 覆盖
 RUN npm config set registry ${NPM_REGISTRY} \
-    && cd /workspace/jeepay-ui-${PLATFORM} \
-    && npm install \
+    && npm install
+
+# 第3层: 复制源代码和构建配置（依赖已缓存，此处仅复制变更的文件）
+COPY jeepay-ui-cashier/ ./jeepay-ui-cashier/
+COPY jeepay-ui-manager/ ./jeepay-ui-manager/
+COPY jeepay-ui-merchant/ ./jeepay-ui-merchant/
+COPY default.conf.template ./
+
+# 第4层: 仅构建目标平台
+RUN cd /workspace/jeepay-ui-${PLATFORM} \
     && npm run build
 
 # 运行阶段

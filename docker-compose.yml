@@ -1,8 +1,8 @@
 services:
   mysql:
-    build:
-      context: .
-      dockerfile: docker/mysql/Dockerfile
+    # 使用官方 MySQL 镜像 + 挂载初始化 SQL，避免自定义构建
+    # 这样可以节省磁盘空间和构建时间（不再需要 docker build）
+    image: mysql:8.4
     environment:
       LANG: C.UTF-8
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
@@ -15,6 +15,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql:/var/lib/mysql
+      - ./docs/sql/init.sql:/docker-entrypoint-initdb.d/001-openhubs-pay-init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "MYSQL_PWD=$${MYSQL_ROOT_PASSWORD} mysql -uroot -e \"SELECT 1\" || exit 1"]
       interval: 10s

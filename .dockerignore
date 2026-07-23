@@ -1,12 +1,42 @@
+# 版本控制和 IDE
 .git
 .github
 .idea
 .vscode
 .worktrees
+
+# 构建产物
 **/target
 **/node_modules
 **/dist
+
+# 日志
 logs
 *.log
+
+# 环境变量（敏感信息）
 .env
+.env.*
+!.env.example
+
+# 其他服务的源码（各自有独立的 build context，不需要传给 Java 服务）
+kitfoxpay/
+jeepay-ui/
+
+# 文档和不需要的文件（减少 build context）
+*.docx
+*.pdf
+docs/
+*.md
+
+# 备份和临时文件
 jeepay-ui.user-backup-*
+*.bak
+*.tmp
+*.swp
+
+# 脚本（部署时不需要）
+scripts/
+
+# 工作目录
+.workbuddy/
