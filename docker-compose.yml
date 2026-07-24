@@ -11,8 +11,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
     expose:
       - "3306"
-    ports:
-      - "3306:3306"
+    # 注意：不映射宿主机端口，避免与 Coolify 服务器自带的 MySQL 冲突
+    # 容器间通过 Docker 内部网络通信（如 payment 服务通过 mysql:3306 访问）
     volumes:
       - mysql:/var/lib/mysql
       - ./docs/sql/init.sql:/docker-entrypoint-initdb.d/001-openhubs-pay-init.sql:ro
