@@ -183,8 +183,12 @@ services:
       PORT: 80
     expose:
       - "80"
+    # 保留端口映射作为备选（IP:端口直接访问），同时加入 Coolify 代理网络
     ports:
       - "9226:80"
+    networks:
+      - default
+      - coolify
     depends_on:
       payment:
         condition: service_started
@@ -209,6 +213,9 @@ services:
       - "80"
     ports:
       - "9227:80"
+    networks:
+      - default
+      - coolify
     depends_on:
       manager:
         condition: service_started
@@ -233,6 +240,9 @@ services:
       - "80"
     ports:
       - "9228:80"
+    networks:
+      - default
+      - coolify
     depends_on:
       merchant:
         condition: service_started
@@ -255,6 +265,9 @@ services:
     container_name: openhubs-kitfoxpay
     ports:
       - "9229:9219"
+    networks:
+      - default
+      - coolify
     environment:
       JEEPAY_BASE_URL: http://payment:9216
       JEEPAY_MCH_NO: ${KITFOX_MCH_NO:-M1784708760}
@@ -276,6 +289,13 @@ services:
       retries: 3
       start_period: 15s
     restart: unless-stopped
+
+networks:
+  default:
+    # Compose 自动创建的内网，mysql/redis/activemq/java 服务在此通信
+  coolify:
+    # Coolify 的 Traefik 反向代理网络，前端服务需要加入此网络才能被路由
+    external: true
 
 volumes:
   mysql:
