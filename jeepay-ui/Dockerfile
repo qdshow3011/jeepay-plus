@@ -4,8 +4,9 @@ FROM node:20-alpine AS builder
 ARG PLATFORM
 ARG NPM_REGISTRY=https://registry.npmmirror.com
 
-# 防止 Vite 构建时 OOM（4GB 限制，适配小型服务器）
-ENV NODE_OPTIONS=--max-old-space-size=4096
+# 限制 Node 堆内存，防止 Coolify 并行构建多个 UI 时总内存超过服务器上限
+# 3 个 UI + 3 个 Maven 并行构建，单个 Node 进程 2GB，总计可控
+ENV NODE_OPTIONS=--max-old-space-size=2048
 
 WORKDIR /workspace
 

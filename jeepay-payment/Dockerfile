@@ -1,5 +1,7 @@
 FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /workspace
+# 限制 Maven JVM 堆内存，防止 Coolify 并行构建时 OOM
+ENV MAVEN_OPTS="-Xmx512m -XX:MaxMetaspaceSize=256m"
 COPY .mvn/settings.xml /root/.m2/settings.xml
 COPY . .
 RUN mvn -B -pl jeepay-payment -am package -DskipTests

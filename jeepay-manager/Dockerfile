@@ -1,5 +1,6 @@
 FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /workspace
+ENV MAVEN_OPTS="-Xmx512m -XX:MaxMetaspaceSize=256m"
 COPY .mvn/settings.xml /root/.m2/settings.xml
 COPY . .
 RUN mvn -B -pl jeepay-manager -am package -DskipTests
