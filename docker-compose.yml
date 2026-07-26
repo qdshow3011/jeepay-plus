@@ -222,7 +222,7 @@ services:
       - coolify
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ui-manager.rule=Host(`${MANAGER_DOMAIN:-admin.open-hubs.com}`)"
+      - "traefik.http.routers.ui-manager.rule=Host(`${MANAGER_DOMAIN:-mpay.open-hubs.com}`)"
       - "traefik.http.routers.ui-manager.entrypoints=web"
       - "traefik.http.services.ui-manager.loadbalancer.server.port=80"
     depends_on:
@@ -254,7 +254,7 @@ services:
       - coolify
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ui-merchant.rule=Host(`${MERCHANT_DOMAIN:-merchant.open-hubs.com}`)"
+      - "traefik.http.routers.ui-merchant.rule=Host(`${MERCHANT_DOMAIN:-kpay.open-hubs.com}`)"
       - "traefik.http.routers.ui-merchant.entrypoints=web"
       - "traefik.http.services.ui-merchant.loadbalancer.server.port=80"
     depends_on:
@@ -284,7 +284,7 @@ services:
       - coolify
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.kitfoxpay.rule=Host(`${KITFOX_DOMAIN:-mpay.open-hubs.com}`)"
+      - "traefik.http.routers.kitfoxpay.rule=Host(`${KITFOX_DOMAIN:-kit.open-hubs.com}`)"
       - "traefik.http.routers.kitfoxpay.entrypoints=web"
       - "traefik.http.services.kitfoxpay.loadbalancer.server.port=9219"
     environment:
