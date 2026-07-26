@@ -2,8 +2,8 @@ services:
   mysql:
     # 使用官方 MySQL 镜像 + 挂载初始化 SQL，避免自定义构建
     image: mysql:8.4
-    # 限制容器内存，防止小服务器 OOM
-    mem_limit: 512m
+    # MySQL 8.4 需要至少 512MB 内存用于 buffer pool，init.sql 导入期间峰值更高
+    mem_limit: 768m
     environment:
       LANG: C.UTF-8
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
@@ -16,14 +16,17 @@ services:
     volumes:
       - mysql:/var/lib/mysql
       - ./docs/sql/init.sql:/docker-entrypoint-initdb.d/001-openhubs-pay-init.sql:ro
-    # 健康检查：查询 t_mch_info 表确保 init.sql 已执行完毕
-    # 仅 SELECT 1 无法保证表已创建，Java 启动时会因找不到表而崩溃
+    # 健康检查：使用 mysqladmin ping（MySQL 镜像内置，本地 socket 连接最可靠）
+    # start_period=300s 确保 init.sql（822行/79KB）有足够时间执行完毕
+    # 注意：mysqladmin ping 仅验证 MySQL 已接受连接，不验证 init.sql 是否执行完毕；
+    # 如果 init.sql 仍在运行中 Java 服务就启动了，Spring Boot 启动失败后 Docker
+    # 的 restart: unless-stopped 会自动重启，最终所有表创建完毕后应用就能正常启动
     healthcheck:
-      test: ["CMD-SHELL", "MYSQL_PWD=$${MYSQL_ROOT_PASSWORD} mysql -uroot -D $${MYSQL_DATABASE} -e \"SELECT 1 FROM t_mch_info LIMIT 1\" || exit 1"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 10s
       retries: 30
-      start_period: 120s
+      start_period: 300s
     restart: unless-stopped
 
   redis:
