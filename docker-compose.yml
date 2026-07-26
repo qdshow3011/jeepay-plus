@@ -261,12 +261,13 @@ services:
         condition: service_started
     restart: unless-stopped
 
-# coolify 网络：不使用 external:true
-# 如果网络已存在（Coolify 创建），Docker 直接复用
-# 如果不存在，Docker 自动创建，避免部署失败
+# coolify 网络：必须使用 external:true
+# Coolify 服务器上的 coolify 网络由 Coolify 自身创建（非 Compose 创建），
+# Compose 检测到该网络已存在但不是由 Compose 创建时会拒绝使用，
+# 因此必须显式声明 external:true 以复用已有网络。
 networks:
   coolify:
-    name: coolify
+    external: true
 
 volumes:
   mysql:
