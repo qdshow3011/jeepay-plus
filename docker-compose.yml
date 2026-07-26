@@ -185,6 +185,14 @@ services:
       - "80"
     ports:
       - "9226:80"
+    networks:
+      - default
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ui-payment.rule=Host(`${PAYMENT_UI_DOMAIN:-pay.open-hubs.com}`)"
+      - "traefik.http.routers.ui-payment.entrypoints=web"
+      - "traefik.http.services.ui-payment.loadbalancer.server.port=80"
     depends_on:
       payment:
         condition: service_started
@@ -209,6 +217,14 @@ services:
       - "80"
     ports:
       - "9227:80"
+    networks:
+      - default
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ui-manager.rule=Host(`${MANAGER_DOMAIN:-admin.open-hubs.com}`)"
+      - "traefik.http.routers.ui-manager.entrypoints=web"
+      - "traefik.http.services.ui-manager.loadbalancer.server.port=80"
     depends_on:
       manager:
         condition: service_started
@@ -233,6 +249,14 @@ services:
       - "80"
     ports:
       - "9228:80"
+    networks:
+      - default
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ui-merchant.rule=Host(`${MERCHANT_DOMAIN:-merchant.open-hubs.com}`)"
+      - "traefik.http.routers.ui-merchant.entrypoints=web"
+      - "traefik.http.services.ui-merchant.loadbalancer.server.port=80"
     depends_on:
       merchant:
         condition: service_started
@@ -255,6 +279,14 @@ services:
     container_name: openhubs-kitfoxpay
     ports:
       - "9229:9219"
+    networks:
+      - default
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kitfoxpay.rule=Host(`${KITFOX_DOMAIN:-mpay.open-hubs.com}`)"
+      - "traefik.http.routers.kitfoxpay.entrypoints=web"
+      - "traefik.http.services.kitfoxpay.loadbalancer.server.port=9219"
     environment:
       JEEPAY_BASE_URL: http://payment:9216
       JEEPAY_MCH_NO: ${KITFOX_MCH_NO:-M1784708760}
@@ -276,6 +308,10 @@ services:
       retries: 3
       start_period: 15s
     restart: unless-stopped
+
+networks:
+  coolify:
+    external: true
 
 volumes:
   mysql:
