@@ -35,6 +35,9 @@ FROM nginx:alpine
 
 ARG PLATFORM
 
+# 安装 curl 供健康检查使用（nginx:alpine 默认不含 curl）
+RUN apk add --no-cache curl
+
 ENV BACKEND_HOST=${BACKEND_HOST}
 ENV PORT=80
 
