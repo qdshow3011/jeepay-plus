@@ -7,13 +7,17 @@ server {
     try_files $uri $uri/ /index.html;
 
     location /api/ {
-        proxy_next_upstream http_502 http_504 error timeout invalid_header;
-
-        # Use Docker's internal DNS resolver and a variable to force dynamic DNS resolution.
-        # Otherwise Nginx caches the backend IP at startup, causing 502 after container restarts.
-        resolver 127.0.0.11 valid=10s;
+        # Docker 内部 DNS 解析器，动态解析后端容器 IP
+        # 解决容器重启后 nginx 缓存旧 IP 导致 502 的问题
+        resolver 127.0.0.11 valid=10s ipv6=off;
         set $backend "${BACKEND_HOST}";
         proxy_pass http://$backend;
+
+        # 后端启动期间的重试和超时设置
+        proxy_next_upstream http_502 http_504 error timeout invalid_header;
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 60s;
+        proxy_send_timeout 30s;
 
         proxy_set_header Host  $host;
         proxy_set_header X-Real-IP $remote_addr;

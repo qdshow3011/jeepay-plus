@@ -17,5 +17,4 @@ COPY --chown=openhubs:openhubs conf/manager/application.yml /openhubshomes/servi
 USER openhubs
 WORKDIR /openhubshomes/service/app
 EXPOSE 9217
-HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=5 CMD curl --fail --silent http://localhost:9217/actuator/health || exit 1
 ENTRYPOINT ["java", "-jar", "jeepay-manager.jar"]

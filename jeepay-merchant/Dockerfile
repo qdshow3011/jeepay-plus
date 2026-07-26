@@ -17,5 +17,4 @@ COPY --chown=openhubs:openhubs conf/merchant/application.yml /openhubshomes/serv
 USER openhubs
 WORKDIR /openhubshomes/service/app
 EXPOSE 9218
-HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=5 CMD curl --fail --silent http://localhost:9218/actuator/health || exit 1
 ENTRYPOINT ["java", "-jar", "jeepay-merchant.jar"]

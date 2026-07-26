@@ -1,7 +1,6 @@
 services:
   mysql:
     # 使用官方 MySQL 镜像 + 挂载初始化 SQL，避免自定义构建
-    # 这样可以节省磁盘空间和构建时间（不再需要 docker build）
     image: mysql:8.4
     environment:
       LANG: C.UTF-8
@@ -11,17 +10,18 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
     expose:
       - "3306"
-    # 注意：不映射宿主机端口，避免与 Coolify 服务器自带的 MySQL 冲突
-    # 容器间通过 Docker 内部网络通信（如 payment 服务通过 mysql:3306 访问）
+    # 不映射宿主机端口，避免与 Coolify 服务器其他 MySQL 冲突
     volumes:
       - mysql:/var/lib/mysql
       - ./docs/sql/init.sql:/docker-entrypoint-initdb.d/001-openhubs-pay-init.sql:ro
+    # 健康检查：查询 t_mch_info 表确保 init.sql 已执行完毕
+    # 仅 SELECT 1 无法保证表已创建，Java 启动时会因找不到表而崩溃
     healthcheck:
-      test: ["CMD-SHELL", "MYSQL_PWD=$${MYSQL_ROOT_PASSWORD} mysql -uroot -e \"SELECT 1\" || exit 1"]
+      test: ["CMD-SHELL", "MYSQL_PWD=$${MYSQL_ROOT_PASSWORD} mysql -uroot -D $${MYSQL_DATABASE} -e \"SELECT 1 FROM t_mch_info LIMIT 1\" || exit 1"]
       interval: 10s
       timeout: 10s
       retries: 30
-      start_period: 180s
+      start_period: 300s
     restart: unless-stopped
 
   redis:
@@ -72,6 +72,8 @@ services:
       ACTIVEMQ_USER: ${ACTIVEMQ_USER:?}
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
       OPENHUBS_CORS_ALLOWED_ORIGINS: ${OPENHUBS_CORS_ALLOWED_ORIGINS:?}
+      # 限制 JVM 堆内存，防止小服务器 OOM
+      JAVA_TOOL_OPTIONS: "-Xmx512m -Xms256m -XX:MaxMetaspaceSize=256m"
     expose:
       - "9216"
     depends_on:
@@ -84,8 +86,6 @@ services:
     volumes:
       - payment-logs:/openhubshomes/service/logs
       - payment-uploads:/openhubshomes/service/uploads
-    healthcheck:
-      disable: true
     restart: unless-stopped
 
   manager:
@@ -104,6 +104,7 @@ services:
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
       MANAGER_JWT_SECRET: ${MANAGER_JWT_SECRET:?MANAGER_JWT_SECRET is required}
       OPENHUBS_CORS_ALLOWED_ORIGINS: ${OPENHUBS_CORS_ALLOWED_ORIGINS:?}
+      JAVA_TOOL_OPTIONS: "-Xmx512m -Xms256m -XX:MaxMetaspaceSize=256m"
     expose:
       - "9217"
     depends_on:
@@ -116,8 +117,6 @@ services:
     volumes:
       - manager-logs:/openhubshomes/service/logs
       - manager-uploads:/openhubshomes/service/uploads
-    healthcheck:
-      disable: true
     restart: unless-stopped
 
   merchant:
@@ -136,6 +135,7 @@ services:
       ACTIVEMQ_PASSWORD: ${ACTIVEMQ_PASSWORD:?ACTIVEMQ_PASSWORD is required}
       MERCHANT_JWT_SECRET: ${MERCHANT_JWT_SECRET:?MERCHANT_JWT_SECRET is required}
       OPENHUBS_CORS_ALLOWED_ORIGINS: ${OPENHUBS_CORS_ALLOWED_ORIGINS:?}
+      JAVA_TOOL_OPTIONS: "-Xmx512m -Xms256m -XX:MaxMetaspaceSize=256m"
     expose:
       - "9218"
     depends_on:
@@ -148,8 +148,6 @@ services:
     volumes:
       - merchant-logs:/openhubshomes/service/logs
       - merchant-uploads:/openhubshomes/service/uploads
-    healthcheck:
-      disable: true
     restart: unless-stopped
 
   ui-payment:
@@ -163,8 +161,7 @@ services:
       PORT: 80
     expose:
       - "80"
-    ports:
-      - "9226:80"
+    # 不映射宿主机端口：Traefik 通过 coolify 网络路由
     networks:
       - default
       - coolify
@@ -173,11 +170,10 @@ services:
       - "traefik.http.routers.ui-payment.rule=Host(`${PAYMENT_UI_DOMAIN:-pay.open-hubs.com}`)"
       - "traefik.http.routers.ui-payment.entrypoints=web"
       - "traefik.http.services.ui-payment.loadbalancer.server.port=80"
+      - "traefik.docker.network=coolify"
     depends_on:
       payment:
         condition: service_started
-    healthcheck:
-      disable: true
     restart: unless-stopped
 
   ui-manager:
@@ -191,8 +187,6 @@ services:
       PORT: 80
     expose:
       - "80"
-    ports:
-      - "9227:80"
     networks:
       - default
       - coolify
@@ -201,11 +195,10 @@ services:
       - "traefik.http.routers.ui-manager.rule=Host(`${MANAGER_DOMAIN:-mpay.open-hubs.com}`)"
       - "traefik.http.routers.ui-manager.entrypoints=web"
       - "traefik.http.services.ui-manager.loadbalancer.server.port=80"
+      - "traefik.docker.network=coolify"
     depends_on:
       manager:
         condition: service_started
-    healthcheck:
-      disable: true
     restart: unless-stopped
 
   ui-merchant:
@@ -219,8 +212,6 @@ services:
       PORT: 80
     expose:
       - "80"
-    ports:
-      - "9228:80"
     networks:
       - default
       - coolify
@@ -229,11 +220,10 @@ services:
       - "traefik.http.routers.ui-merchant.rule=Host(`${MERCHANT_DOMAIN:-kpay.open-hubs.com}`)"
       - "traefik.http.routers.ui-merchant.entrypoints=web"
       - "traefik.http.services.ui-merchant.loadbalancer.server.port=80"
+      - "traefik.docker.network=coolify"
     depends_on:
       merchant:
         condition: service_started
-    healthcheck:
-      disable: true
     restart: unless-stopped
 
   # ============================================================
@@ -244,9 +234,8 @@ services:
     build:
       context: ./kitfoxpay
       dockerfile: Dockerfile
-    container_name: openhubs-kitfoxpay
-    ports:
-      - "9229:9219"
+    expose:
+      - "9219"
     networks:
       - default
       - coolify
@@ -255,6 +244,7 @@ services:
       - "traefik.http.routers.kitfoxpay.rule=Host(`${KITFOX_DOMAIN:-kit.open-hubs.com}`)"
       - "traefik.http.routers.kitfoxpay.entrypoints=web"
       - "traefik.http.services.kitfoxpay.loadbalancer.server.port=9219"
+      - "traefik.docker.network=coolify"
     environment:
       JEEPAY_BASE_URL: http://payment:9216
       JEEPAY_MCH_NO: ${KITFOX_MCH_NO:-M1784708760}
@@ -264,18 +254,19 @@ services:
       EPAY_KEY: ${KITFOX_EPAY_KEY:-CHANGE_ME_32_CHARS_KEY_HERE}
       SERVER_HOST: "0.0.0.0"
       SERVER_PORT: "9219"
-      SITE_DOMAIN: ${KITFOX_SITE_DOMAIN:-http://localhost:9229}
+      SITE_DOMAIN: ${KITFOX_SITE_DOMAIN:-http://localhost:9219}
       ADMIN_PASSWORD: ${KITFOX_ADMIN_PASSWORD:-admin123}
     depends_on:
       payment:
         condition: service_started
-    healthcheck:
-      disable: true
     restart: unless-stopped
 
+# coolify 网络：不使用 external:true
+# 如果网络已存在（Coolify 创建），Docker 直接复用
+# 如果不存在，Docker 自动创建，避免部署失败
 networks:
   coolify:
-    external: true
+    name: coolify
 
 volumes:
   mysql:

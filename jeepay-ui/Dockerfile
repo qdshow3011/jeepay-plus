@@ -35,7 +35,7 @@ FROM nginx:alpine
 
 ARG PLATFORM
 
-# 安装 curl 供健康检查使用（nginx:alpine 默认不含 curl）
+# 安装 curl 供调试和 nginx 健康检查使用
 RUN apk add --no-cache curl
 
 ENV BACKEND_HOST=${BACKEND_HOST}
@@ -54,8 +54,5 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-  CMD curl -f -s http://localhost:80/ || exit 1
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

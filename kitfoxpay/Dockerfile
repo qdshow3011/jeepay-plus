@@ -26,12 +26,9 @@ COPY docs/ ./docs/
 ENV NODE_ENV=production
 ENV SERVER_HOST=0.0.0.0
 ENV SERVER_PORT=9219
-ENV JEEPAY_BASE_URL=http://host.docker.internal:9216
+ENV JEEPAY_BASE_URL=http://payment:9216
 ENV SITE_DOMAIN=http://localhost:9219
 
 EXPOSE 9219
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:9219/api/health',r=>{process.exit(r.statusCode===200?0:1)})"
 
 CMD ["node", "index.js"]
